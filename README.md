@@ -44,35 +44,13 @@ cd ceph-command-kb
 pip install -e ".[dev]"
 ```
 
-### Generate Knowledge Base
-
-Run on a machine with Ceph installed (or inside `cephadm shell --mount`):
-
-```bash
-python generate_reference.py --verbose
-python generate_reference.py --workers 8 --force
-python generate_reference.py --resume          # Continue after interruption
-python generate_reference.py --reparse         # Re-parse from stored raw help
-```
-
-### Import Config Parameters
-
-```bash
-# From reference TSV (ceph config help output)
-python import_configs.py --reference ceph_config_reference.tsv
-
-# From per-daemon defaults TSV (ceph config show-with-defaults)
-python import_configs.py --defaults ceph_config_all_defaults.tsv
-
-# Both merged
-python import_configs.py --reference ref.tsv --defaults defaults.tsv
-```
-
 ### Run Tests
 
 ```bash
 python -m pytest tests/ -v
 ```
+
+> **Note for maintainers:** The knowledge base is pre-generated and shipped with the repo. See [Maintainer Guide](#maintainer-guide) at the bottom for regeneration instructions.
 
 ## Server Modes
 
@@ -281,7 +259,7 @@ docker run -d -p 9090:9090 -v /path/to/knowledge:/app/knowledge ceph-command-kb
 | `/api/validate_script` | POST | Quick script validation |
 | `/api/review_test` | POST | Full test review |
 
-## Output Structure
+## Knowledge Base Structure
 
 ```
 knowledge/ceph-20.2.1-tentacle/
@@ -289,10 +267,9 @@ knowledge/ceph-20.2.1-tentacle/
   configs.json           # 2,660 config parameters with types, defaults, descriptions
   search_index.json      # Optimized lookup (37,000+ keyword entries)
   metadata.json          # Version, stats, parse quality metrics
-  generation.log         # Discovery and parsing log
-  markdown/              # 1,254 Markdown files (one per command)
-  raw_help/              # 1,254 raw help text files
 ```
+
+Pre-generated and shipped with the repo. No Ceph cluster needed to use.
 
 ## Project Structure
 
@@ -354,3 +331,51 @@ The architecture supports any CLI tool. Adding `kubectl`, `podman`, `systemctl`,
 4. **Safe executor as single subprocess boundary** — All safety in one place.
 5. **Version-specific output** — Multiple versions coexist. Never mix.
 6. **Deterministic validation + LLM reasoning** — MCP tools provide verified facts (command existence, flag validity). The LLM provides contextual reasoning (workflow analysis, QE practices). No brittle rule engine for what the LLM does better.
+
+---
+
+## Maintainer Guide
+
+This section is for regenerating the knowledge base when a new Ceph version is released.
+
+### Regenerate Command KB
+
+Run inside `cephadm shell --mount /path/to/ceph-command-kb:/mnt/ceph-command-kb`:
+
+```bash
+cd /mnt/ceph-command-kb
+python3 generate_reference.py --verbose --force
+python3 generate_reference.py --verbose --docs   # optional: also generate markdown + raw help
+```
+
+### Capture Config Parameters
+
+On a Ceph node with a running cluster:
+
+```bash
+python3 capture_config_reference.py ceph_config_reference.tsv 32
+```
+
+Then import:
+
+```bash
+python3 import_configs.py \
+  --reference ceph_config_reference.tsv \
+  --defaults ceph_config_all_defaults.tsv
+```
+
+### Update from Manual Help Text
+
+For tools where the parser doesn't fully extract metadata:
+
+```bash
+python3 update_from_help.py
+```
+
+### Re-parse with Improved Parsers
+
+After fixing a parser, regenerate structured data from stored raw help:
+
+```bash
+python3 reparse_kb.py
+```
