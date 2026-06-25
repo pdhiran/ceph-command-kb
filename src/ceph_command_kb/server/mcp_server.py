@@ -378,8 +378,8 @@ def get_raw_help(command_name: str) -> str:
     """
     if _kb_dir:
         filename = command_name.replace(" ", "-") + ".txt"
-        raw_path = _kb_dir / "raw_help" / filename
-        if raw_path.exists():
+        raw_path = (_kb_dir / "raw_help" / filename).resolve()
+        if raw_path.is_relative_to((_kb_dir / "raw_help").resolve()) and raw_path.exists():
             return raw_path.read_text(encoding="utf-8")
 
     commands = _get_commands_map()

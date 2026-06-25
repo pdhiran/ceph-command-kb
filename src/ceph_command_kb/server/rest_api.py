@@ -25,19 +25,23 @@ from starlette.routing import Route
 from ceph_command_kb.server.mcp_server import (
     find_binary,
     find_command,
+    get_config_help,
     get_examples,
     get_help,
     get_raw_help,
     init_kb,
+    list_configs_by_section,
     list_subcommands,
     list_versions,
     review_test,
     search_argument,
     search_commands,
+    search_config,
     search_flag,
     search_keyword,
     validate_script,
     verify_command,
+    verify_config,
 )
 
 logger = logging.getLogger(__name__)
@@ -128,6 +132,30 @@ async def handle_search_keyword(request: Request) -> JSONResponse:
     return JSONResponse(_parse_json(result))
 
 
+async def handle_verify_config(request: Request) -> JSONResponse:
+    params = await request.json()
+    result = verify_config(config_name=params["config_name"])
+    return JSONResponse(_parse_json(result))
+
+
+async def handle_search_config(request: Request) -> JSONResponse:
+    params = await request.json()
+    result = search_config(query=params["query"], limit=params.get("limit", 20))
+    return JSONResponse(_parse_json(result))
+
+
+async def handle_get_config_help(request: Request) -> JSONResponse:
+    params = await request.json()
+    result = get_config_help(config_name=params["config_name"])
+    return JSONResponse(_parse_json(result))
+
+
+async def handle_list_configs_by_section(request: Request) -> JSONResponse:
+    params = await request.json()
+    result = list_configs_by_section(section=params["section"], limit=params.get("limit", 50))
+    return JSONResponse(_parse_json(result))
+
+
 async def handle_validate_script(request: Request) -> JSONResponse:
     params = await request.json()
     result = validate_script(
@@ -169,6 +197,10 @@ routes = [
     Route("/api/list_versions", handle_list_versions, methods=["GET", "POST"]),
     Route("/api/find_binary", handle_find_binary, methods=["POST"]),
     Route("/api/search_keyword", handle_search_keyword, methods=["POST"]),
+    Route("/api/verify_config", handle_verify_config, methods=["POST"]),
+    Route("/api/search_config", handle_search_config, methods=["POST"]),
+    Route("/api/get_config_help", handle_get_config_help, methods=["POST"]),
+    Route("/api/list_configs_by_section", handle_list_configs_by_section, methods=["POST"]),
     Route("/api/validate_script", handle_validate_script, methods=["POST"]),
     Route("/api/review_test", handle_review_test, methods=["POST"]),
 ]

@@ -12,6 +12,8 @@ license = {text = "MIT"}
 dependencies = [
     "pyyaml>=6.0",
     "mcp>=1.0",
+    "uvicorn>=0.27",
+    "starlette>=0.36",
 ]
 
 [project.optional-dependencies]
@@ -19,9 +21,6 @@ dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
 ]
-
-[project.scripts]
-ceph-command-kb = "ceph_command_kb.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
