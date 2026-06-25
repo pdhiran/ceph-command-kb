@@ -2,9 +2,21 @@
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
+
+
+def make_entity_id(entity_type: str, name: str, version: str = "") -> str:
+    """Generate a stable, deterministic entity ID.
+
+    The ID is a short hash of the entity type + name + version.
+    Same inputs always produce the same ID, regardless of when
+    indexing happens.
+    """
+    key = f"{entity_type}:{name}:{version}"
+    return hashlib.sha256(key.encode()).hexdigest()[:16]
 
 
 class ArgumentType(Enum):
@@ -99,8 +111,13 @@ class Command:
     keywords: list[str] = field(default_factory=list)
     deprecated: bool = False
 
+    @property
+    def entity_id(self) -> str:
+        return make_entity_id("command", self.name)
+
     def to_dict(self) -> dict[str, Any]:
         return {
+            "entity_id": self.entity_id,
             "name": self.name,
             "binary": self.binary,
             "parts": self.parts,
@@ -200,6 +217,10 @@ class ConfigOption:
     desc: str = ""
     long_desc: str = ""
     can_update_at_runtime: bool = False
+
+    @property
+    def entity_id(self) -> str:
+        return make_entity_id("config", self.name)
     services: list[str] = field(default_factory=list)
     min: str = ""
     max: str = ""
@@ -210,6 +231,7 @@ class ConfigOption:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "entity_id": self.entity_id,
             "name": self.name,
             "type": self.type,
             "level": self.level,

@@ -701,6 +701,68 @@ def review_test(script_content: str, script_type: str = "auto") -> str:
     return json.dumps(report.to_dict(), indent=2)
 
 
+# ── Platform contract tools ────────────────────────────────────────────
+
+SCHEMA_VERSION = "1.0"
+
+
+@mcp.tool()
+def capabilities() -> str:
+    """Return machine-readable capabilities of this knowledge base.
+
+    Used by orchestrators and agents for automatic capability discovery.
+    Every MCP in the Engineering Intelligence Platform exposes this tool.
+    """
+    cmd_count = len(_get_commands_map())
+    config_count = len(_config_data) if _config_data else 0
+    version_info = _kb_data.get("version", {}) if _kb_data else {}
+
+    return json.dumps({
+        "name": "Ceph Command Knowledge Base",
+        "description": "Verified CLI commands, config parameters, and test validation for Ceph storage",
+        "schema_version": SCHEMA_VERSION,
+        "entity_types": ["command", "config"],
+        "operations": [
+            "verify_command", "find_command", "search_commands",
+            "list_subcommands", "search_flag", "search_argument",
+            "get_help", "get_raw_help", "get_examples",
+            "find_binary", "search_keyword",
+            "verify_config", "search_config", "get_config_help",
+            "list_configs_by_section",
+            "validate_script", "review_test",
+            "capabilities", "health",
+        ],
+        "supported_versions": [version_info.get("label", "unknown")],
+        "entity_counts": {
+            "commands": cmd_count,
+            "configs": config_count,
+        },
+    }, indent=2)
+
+
+@mcp.tool()
+def health() -> str:
+    """Return operational health status of this knowledge base.
+
+    Includes whether the index is loaded, entity counts, and readiness.
+    Every MCP in the Engineering Intelligence Platform exposes this tool.
+    """
+    cmd_count = len(_get_commands_map())
+    config_count = len(_config_data) if _config_data else 0
+    kb_loaded = _kb_data is not None and cmd_count > 0
+    version_info = _kb_data.get("version", {}) if _kb_data else {}
+
+    return json.dumps({
+        "status": "ok" if kb_loaded else "degraded",
+        "kb_loaded": kb_loaded,
+        "search_ready": _search_index is not None and bool(_search_index),
+        "total_commands": cmd_count,
+        "total_configs": config_count,
+        "version": version_info.get("label", "unknown"),
+        "schema_version": SCHEMA_VERSION,
+    }, indent=2)
+
+
 SUPPORTED_TRANSPORTS = ("stdio", "sse", "streamable-http")
 
 
