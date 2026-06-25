@@ -134,19 +134,22 @@ async def handle_search_keyword(request: Request) -> JSONResponse:
 
 async def handle_verify_config(request: Request) -> JSONResponse:
     params = await request.json()
-    result = verify_config(config_name=params["config_name"])
+    name = params.get("name") or params.get("config_name", "")
+    result = verify_config(name=name)
     return JSONResponse(_parse_json(result))
 
 
 async def handle_search_config(request: Request) -> JSONResponse:
     params = await request.json()
-    result = search_config(query=params["query"], limit=params.get("limit", 20))
+    query = params.get("query") or params.get("keyword", "")
+    result = search_config(query=query, limit=params.get("limit", 20))
     return JSONResponse(_parse_json(result))
 
 
 async def handle_get_config_help(request: Request) -> JSONResponse:
     params = await request.json()
-    result = get_config_help(config_name=params["config_name"])
+    name = params.get("name") or params.get("config_name", "")
+    result = get_config_help(name=name)
     return JSONResponse(_parse_json(result))
 
 

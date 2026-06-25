@@ -483,7 +483,7 @@ def search_keyword(keyword: str) -> str:
 
 
 @mcp.tool()
-def verify_config(config_name: str) -> str:
+def verify_config(name: str) -> str:
     """Verify that a Ceph configuration parameter exists and is valid.
 
     Use this BEFORE setting any Ceph config in automation or tests.
@@ -491,11 +491,12 @@ def verify_config(config_name: str) -> str:
     which daemons it applies to.
 
     Args:
-        config_name: The config parameter name, e.g. 'osd_pool_default_size'
+        name: The config parameter name, e.g. 'osd_pool_default_size'
     """
     if not _config_data:
         return json.dumps({"status": "NO_CONFIG_DATA", "reason": "Config knowledge base not loaded"})
 
+    config_name = name
     cfg = _config_data.get(config_name)
     if cfg is None:
         close = [
@@ -530,9 +531,10 @@ def search_config(query: str, limit: int = 20) -> str:
     """Search for Ceph config parameters by name, description, or keyword.
 
     Use this when looking for a config option but not sure of the exact name.
+    Pass the search term as the 'query' parameter (not 'keyword').
 
     Args:
-        query: Search term, e.g. 'pool size', 'osd recovery', 'auth'
+        query: Search term (keyword, partial name, or description fragment), e.g. 'pool size', 'osd recovery', 'fast_ec'
         limit: Max results (default 20)
     """
     if not _config_data:
@@ -578,21 +580,21 @@ def search_config(query: str, limit: int = 20) -> str:
 
 
 @mcp.tool()
-def get_config_help(config_name: str) -> str:
+def get_config_help(name: str) -> str:
     """Get full metadata for a Ceph config parameter.
 
     Returns type, default, description, constraints, daemon-specific
     defaults, and whether it can be changed at runtime.
 
     Args:
-        config_name: The config parameter name, e.g. 'osd_pool_default_size'
+        name: The config parameter name, e.g. 'osd_pool_default_size'
     """
     if not _config_data:
-        return json.dumps({"found": False, "config": config_name})
+        return json.dumps({"found": False, "config": name})
 
-    cfg = _config_data.get(config_name)
+    cfg = _config_data.get(name)
     if cfg is None:
-        return json.dumps({"found": False, "config": config_name})
+        return json.dumps({"found": False, "config": name})
 
     return json.dumps({"found": True, **cfg}, indent=2)
 
