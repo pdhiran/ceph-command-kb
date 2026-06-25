@@ -1,0 +1,38 @@
+{
+  "version": {
+    "major": 20,
+    "minor": 2,
+    "patch": 1,
+    "release_name": "tentacle",
+    "full_string": "ceph version 20.2.1-294.el9cp (71400d000eb272c5f3f442a9d237e4981f013537) tentacle (stable)",
+    "label": "ceph-20.2.1-tentacle"
+  },
+  "generated_at": "",
+  "generator_version": "",
+  "binaries_discovered": [],
+  "binary_versions": {},
+  "total_commands": 1254,
+  "total_binaries": 0,
+  "commands_by_binary": {
+    "ceph": 1008,
+    "ceph-authtool": 1,
+    "ceph-bluestore-tool": 1,
+    "ceph-objectstore-tool": 1,
+    "ceph-volume": 7,
+    "cephadm": 49,
+    "crushtool": 1,
+    "monmaptool": 1,
+    "osdmaptool": 1,
+    "rados": 39,
+    "rbd": 145
+  },
+  "parse_quality": {
+    "commands_with_description": 1211,
+    "commands_with_arguments": 1035,
+    "commands_with_flags": 1067,
+    "commands_with_examples": 0,
+    "description_coverage_pct": 96.6,
+    "argument_coverage_pct": 82.5,
+    "flag_coverage_pct": 85.1
+  }
+}

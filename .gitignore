@@ -9,7 +9,9 @@ build/
 .pytest_cache/
 .cache/
 
-knowledge/
+knowledge/*/markdown/
+knowledge/*/raw_help/
+knowledge/*/generation.log
 
 *.log
 
