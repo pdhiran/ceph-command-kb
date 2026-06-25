@@ -4,12 +4,13 @@ This guide explains how to integrate the Ceph Command Knowledge Base MCP tool wi
 
 ## Overview
 
-The Ceph Command KB provides three integration methods:
-1. **MCP Server (stdio)** - For IDE integrations like Cursor
-2. **MCP Server (SSE)** - For Claude Desktop and similar tools
+The Ceph Command KB provides four integration methods:
+1. **MCP Server (stdio)** - For Cursor
+2. **MCP Server (SSE)** - For Claude Desktop and similar MCP clients
 3. **REST API** - For Bob agents, LangChain, CrewAI, CI/CD pipelines, and custom integrations
+4. **VS Code Extension** - For VS Code / Bob users with inline verification, search, and script review
 
-**For Bob agents, use the REST API integration.**
+**For Bob agents:** Use the REST API for programmatic access, or install the [VS Code Extension](vscode-extension/) for interactive use in the editor.
 
 ## Architecture
 

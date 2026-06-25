@@ -17,3 +17,6 @@ knowledge/*/generation.log
 
 .venv/
 venv/
+
+node_modules/
+*.vsix

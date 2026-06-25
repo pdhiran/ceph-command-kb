@@ -1,0 +1,91 @@
+{
+  "name": "ceph-command-kb-vscode",
+  "displayName": "Ceph Command KB for Bob",
+  "description": "Integrate Ceph Command Knowledge Base with IBM watsonx Code Assistant (Bob)",
+  "version": "0.1.0",
+  "publisher": "ceph-kb",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:ceph-kb.verifyCommand",
+    "onCommand:ceph-kb.searchCommands",
+    "onCommand:ceph-kb.verifyConfig",
+    "onCommand:ceph-kb.reviewScript",
+    "onCommand:ceph-kb.insertCommand"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ceph-kb.verifyCommand",
+        "title": "Ceph KB: Verify Command"
+      },
+      {
+        "command": "ceph-kb.searchCommands",
+        "title": "Ceph KB: Search Commands"
+      },
+      {
+        "command": "ceph-kb.verifyConfig",
+        "title": "Ceph KB: Verify Config"
+      },
+      {
+        "command": "ceph-kb.reviewScript",
+        "title": "Ceph KB: Review Script"
+      },
+      {
+        "command": "ceph-kb.insertCommand",
+        "title": "Ceph KB: Insert Command"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "ceph-kb.verifyCommand",
+        "key": "ctrl+alt+v",
+        "mac": "cmd+alt+v",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "ceph-kb.searchCommands",
+        "key": "ctrl+alt+c",
+        "mac": "cmd+alt+c",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "Ceph Command KB",
+      "properties": {
+        "ceph-kb.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:9090",
+          "description": "Ceph Command KB REST API URL"
+        },
+        "ceph-kb.autoVerify": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically verify Ceph commands as you type"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/node": "16.x",
+    "@types/vscode": "^1.80.0",
+    "eslint": "^8.41.0"
+  },
+  "dependencies": {
+    "axios": "^1.18.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

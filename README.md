@@ -95,8 +95,9 @@ curl -X POST http://localhost:9090/api/review_test \
 curl http://localhost:9090/health
 ```
 
-**For detailed Bob integration guide and Python examples, see:**
-- [BOB_INTEGRATION_GUIDE.md](BOB_INTEGRATION_GUIDE.md) — Complete integration guide with deployment options
+**Additional integration guides:**
+- [VS Code Extension](vscode-extension/) — Inline command verification, search, and script review for VS Code / Bob users
+- [BOB_INTEGRATION_GUIDE.md](BOB_INTEGRATION_GUIDE.md) — REST API integration guide with deployment options
 - [examples/bob_agent_integration.py](examples/bob_agent_integration.py) — Ready-to-use Python client and LangChain/CrewAI tools
 
 ### 3. Use it
