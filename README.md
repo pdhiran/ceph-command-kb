@@ -25,7 +25,7 @@ Choose the integration that matches your agent:
 ```json
 {
   "mcpServers": {
-    "ceph-kb": {
+    "ceph-cmd-kb": {
       "command": "python3",
       "args": ["-m", "ceph_command_kb.server.mcp_server", "--kb-path", "/path/to/ceph-command-kb/knowledge/ceph-20.2.1-tentacle"],
       "cwd": "/path/to/ceph-command-kb"
@@ -47,7 +47,7 @@ python -m ceph_command_kb.server.mcp_server --transport sse --port 8080
 ```json
 {
   "mcpServers": {
-    "ceph-kb": { "url": "http://localhost:8080/sse" }
+    "ceph-cmd-kb": { "url": "http://localhost:8080/sse" }
   }
 }
 ```

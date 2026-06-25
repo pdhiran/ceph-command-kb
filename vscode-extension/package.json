@@ -3,7 +3,7 @@
   "displayName": "Ceph Command KB for Bob",
   "description": "Integrate Ceph Command Knowledge Base with IBM watsonx Code Assistant (Bob)",
   "version": "0.1.0",
-  "publisher": "ceph-kb",
+  "publisher": "ceph-cmd-kb",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -11,45 +11,45 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:ceph-kb.verifyCommand",
-    "onCommand:ceph-kb.searchCommands",
-    "onCommand:ceph-kb.verifyConfig",
-    "onCommand:ceph-kb.reviewScript",
-    "onCommand:ceph-kb.insertCommand"
+    "onCommand:ceph-cmd-kb.verifyCommand",
+    "onCommand:ceph-cmd-kb.searchCommands",
+    "onCommand:ceph-cmd-kb.verifyConfig",
+    "onCommand:ceph-cmd-kb.reviewScript",
+    "onCommand:ceph-cmd-kb.insertCommand"
   ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "ceph-kb.verifyCommand",
+        "command": "ceph-cmd-kb.verifyCommand",
         "title": "Ceph KB: Verify Command"
       },
       {
-        "command": "ceph-kb.searchCommands",
+        "command": "ceph-cmd-kb.searchCommands",
         "title": "Ceph KB: Search Commands"
       },
       {
-        "command": "ceph-kb.verifyConfig",
+        "command": "ceph-cmd-kb.verifyConfig",
         "title": "Ceph KB: Verify Config"
       },
       {
-        "command": "ceph-kb.reviewScript",
+        "command": "ceph-cmd-kb.reviewScript",
         "title": "Ceph KB: Review Script"
       },
       {
-        "command": "ceph-kb.insertCommand",
+        "command": "ceph-cmd-kb.insertCommand",
         "title": "Ceph KB: Insert Command"
       }
     ],
     "keybindings": [
       {
-        "command": "ceph-kb.verifyCommand",
+        "command": "ceph-cmd-kb.verifyCommand",
         "key": "ctrl+alt+v",
         "mac": "cmd+alt+v",
         "when": "editorTextFocus"
       },
       {
-        "command": "ceph-kb.searchCommands",
+        "command": "ceph-cmd-kb.searchCommands",
         "key": "ctrl+alt+c",
         "mac": "cmd+alt+c",
         "when": "editorTextFocus"
@@ -58,12 +58,12 @@
     "configuration": {
       "title": "Ceph Command KB",
       "properties": {
-        "ceph-kb.apiUrl": {
+        "ceph-cmd-kb.apiUrl": {
           "type": "string",
           "default": "http://localhost:9090",
           "description": "Ceph Command KB REST API URL"
         },
-        "ceph-kb.autoVerify": {
+        "ceph-cmd-kb.autoVerify": {
           "type": "boolean",
           "default": false,
           "description": "Automatically verify Ceph commands as you type"

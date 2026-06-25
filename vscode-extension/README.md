@@ -74,7 +74,7 @@ Enable in VS Code settings:
 
 ```json
 {
-  "ceph-kb.autoVerify": true
+  "ceph-cmd-kb.autoVerify": true
 }
 ```
 
@@ -91,8 +91,8 @@ Scripts are automatically checked on save with inline diagnostics.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `ceph-kb.apiUrl` | `http://localhost:9090` | Ceph Command KB REST API URL |
-| `ceph-kb.autoVerify` | `false` | Automatically verify scripts on save |
+| `ceph-cmd-kb.apiUrl` | `http://localhost:9090` | Ceph Command KB REST API URL |
+| `ceph-cmd-kb.autoVerify` | `false` | Automatically verify scripts on save |
 
 ## Using with IBM watsonx Code Assistant (Bob)
 
