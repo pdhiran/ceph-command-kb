@@ -1,0 +1,73 @@
+---
+description: Verify all Ceph CLI commands and config parameters against the knowledge base MCP before generating automation or tests
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Ceph Command & Config Verification
+
+## Commands
+
+Before generating ANY Ceph CLI command in automation, test code, or scripts:
+
+1. **Verify the command exists** — call `verify_command` with the full command name
+2. **Verify flags** — include all flags in the verification call
+3. **Verify arguments** — include argument names in the verification call
+
+- NEVER invent or guess Ceph commands, flags, or arguments
+- If `verify_command` returns `NOT_VERIFIED`, use `search_commands` to find the correct command
+- If no match exists, state: "This command could not be verified against the knowledge base"
+
+## Config Parameters
+
+Before setting ANY Ceph configuration parameter (`ceph config set`, `ceph config get`, etc.):
+
+1. **Verify the config exists** — call `verify_config` with the parameter name
+2. **Check type and constraints** — verify the value type matches (int, bool, str, etc.)
+3. **Check runtime updatability** — verify `can_update_at_runtime` if applying without restart
+
+- NEVER invent config parameter names
+- If `verify_config` returns `NOT_FOUND`, use `search_config` to find the correct name
+- Use `list_configs_by_section` to explore all options for a subsystem (e.g., "osd", "rgw")
+- Use `get_config_help` for full metadata including min/max constraints
+
+## Test Review Workflow
+
+When asked to review a Ceph test file or automation script:
+
+### Step 1: Deterministic Validation
+Call `review_test(script_content=<file contents>)` to get the automated validation report covering:
+- Command existence verification
+- Flag/argument validity
+- Missing cleanup for created resources
+- Destructive command warnings
+- Duplicate command detection
+
+### Step 2: Contextual Analysis (your reasoning)
+Using the report from Step 1, analyze:
+
+**Workflow ordering:**
+- Are pools created before being used?
+- Are images created before operations on them?
+- Are filesystems created before mounting?
+- Is the cluster healthy before destructive operations?
+
+**Prerequisites:**
+- Are required daemons/services deployed before testing?
+- Are keyrings/auth set up before client operations?
+- Are required pools/images/volumes created in setup?
+
+**QE best practices:**
+- Is `ceph health` or `ceph -s` checked after significant operations?
+- Are there waits/retries for asynchronous operations (recovery, rebalancing)?
+- Is there error handling around operations that can fail?
+- Are results verified after operations (not just "did it not crash")?
+- Are test-specific resources isolated (unique pool/image names)?
+
+**Performance concerns:**
+- Unnecessary `sleep()` calls where polling would be better?
+- Repeated identical health checks that could be consolidated?
+- Sequential operations that could be parallelized?
+
+### Step 3: Present Combined Findings
+Present the deterministic report findings first, then your contextual observations, clearly labeled as "Automated Checks" vs "Contextual Analysis".

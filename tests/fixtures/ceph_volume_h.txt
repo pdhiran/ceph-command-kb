@@ -1,0 +1,42 @@
+usage: ceph-volume [-h] [--cluster CLUSTER] [--log-level {debug,info,warning,error,critical}] [--log-path LOG_PATH]
+
+ceph-volume: Deploy Ceph OSDs using different device technologies like lvm or
+physical disks.
+
+Log Path: /var/log/ceph
+Ceph Conf: /etc/ceph/ceph.conf
+
+Available subcommands:
+
+lvm                      Use LVM and LVM-based technologies to deploy OSDs
+simple                   Manage already deployed OSDs with ceph-volume
+raw                      Manage single-device OSDs on raw block devices
+inventory                Get this nodes available disk inventory
+activate                 Activate an OSD
+drive-group
+    Deploy OSDs according to a drive groups specification.
+
+    The DriveGroup specification must be passed in json.
+    It can either be (preference in this order)
+      - in a file, path passed as a positional argument
+      - read from stdin, pass "-" as a positional argument
+      - a json string passed via the --spec argument
+
+    Either the path postional argument or --spec must be specifed.
+
+
+Environ Variables:
+CEPH_DEVEL=false
+CEPH_POINT_RELEASE=
+CEPH_VERSION=tentacle
+CEPH_REF=tentacle
+CEPH_ARGS=--default-mgr_initial_modules=iostat,nfs,smb,nvmeof
+
+
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --cluster CLUSTER     Cluster name (defaults to "ceph")
+  --log-level {debug,info,warning,error,critical}
+                        Change the file log level (defaults to debug)
+  --log-path LOG_PATH   Change the log path (defaults to /var/log/ceph)

@@ -1,0 +1,148 @@
+usage: rbd <command> ...
+
+Command-line interface for managing RADOS block device (RBD) images.
+
+Positional arguments:
+  <command>
+    bench                            Simple benchmark.
+    children                         Display children of an image or its snapshot.
+    clone                            Clone a snapshot into a COW child image.
+    copy (cp)                        Copy src image to dest.
+    create                           Create an empty rbd image.
+    deep copy (deep cp)              Deep copy src image to dest.
+    device list (showmapped)         List mapped rbd images.
+    device map (map)                 Map an image to a block device.
+    device unmap (unmap)             Unmap a rbd device.
+    diff                             Print extents that differ since a previous snap.
+    disk-usage (du)                  Show disk usage stats for pool, image or snapshot.
+    encryption format                Format image to an encrypted format.
+    export                           Export image to file.
+    export-diff                      Export incremental diff to file.
+    feature disable                  Disable the specified image feature.
+    feature enable                   Enable the specified image feature.
+    flatten                          Fill clone with parent data (make it independent).
+    group create                     Create a group.
+    group image add                  Add an image to a group.
+    group image list                 List images in a group.
+    group image remove               Remove an image from a group.
+    group list (group ls)            List rbd groups.
+    group remove (group rm)          Remove a group.
+    group rename                     Rename a group within pool.
+    group snap create                Make a snapshot of a group.
+    group snap list (group snap ls)  List snapshots of a group.
+    group snap remove (group snap rm) Remove a snapshot from a group.
+    group snap rename                Rename group's snapshot.
+    group snap rollback              Rollback group to snapshot.
+    image-meta get                   Image metadata get the value associated with the key.
+    image-meta list                  Image metadata list keys with values.
+    image-meta remove                Image metadata remove the key and value associated.
+    image-meta set                   Image metadata set key with value.
+    import                           Import image from file.
+    import-diff                      Import an incremental diff.
+    info                             Show information about image size, striping, etc.
+    journal client disconnect        Flag image journal client as disconnected.
+    journal export                   Export image journal.
+    journal import                   Import image journal.
+    journal info                     Show information about image journal.
+    journal inspect                  Inspect image journal for structural errors.
+    journal reset                    Reset image journal.
+    journal status                   Show status of image journal.
+    list (ls)                        List rbd images.
+    lock add                         Take a lock on an image.
+    lock list (lock ls)              Show locks held on an image.
+    lock remove (lock rm)            Release a lock on an image.
+    merge-diff                       Merge two diff exports together.
+    migration abort                  Cancel image migration.
+    migration commit                 Commit image migration.
+    migration execute                Execute image migration.
+    migration prepare                Prepare image migration.
+    mirror image demote              Demote an image to non-primary for RBD mirroring.
+    mirror image disable             Disable RBD mirroring for an image.
+    mirror image enable              Enable RBD mirroring for an image.
+    mirror image promote             Promote an image to primary for RBD mirroring.
+    mirror image resync              Force resync to primary image for RBD mirroring.
+    mirror image snapshot            Create RBD mirroring image snapshot.
+    mirror image status              Show RBD mirroring status for an image.
+    mirror pool demote               Demote all primary images in the pool.
+    mirror pool disable              Disable RBD mirroring by default within a pool.
+    mirror pool enable               Enable RBD mirroring by default within a pool.
+    mirror pool info                 Show information about the pool mirroring configuration.
+    mirror pool peer add             Add a mirroring peer to a pool.
+    mirror pool peer bootstrap create Create a peer bootstrap token.
+    mirror pool peer bootstrap import Import a peer bootstrap token.
+    mirror pool peer remove          Remove a mirroring peer from a pool.
+    mirror pool peer set             Update mirroring peer settings.
+    mirror pool promote              Promote all non-primary images in the pool.
+    mirror pool status               Show status for all mirrored images in the pool.
+    mirror snapshot schedule add     Add mirror snapshot schedule.
+    mirror snapshot schedule list    List mirror snapshot schedule.
+    mirror snapshot schedule remove  Remove mirror snapshot schedule.
+    mirror snapshot schedule status  Show mirror snapshot schedule status.
+    move (mv, rename)                Rename (move) an image within pool.
+    namespace create                 Create an RBD image namespace.
+    namespace list (namespace ls)    List RBD image namespaces.
+    namespace remove (namespace rm)  Remove an RBD image namespace.
+    object-map check                 Verify the object map is correct.
+    object-map rebuild               Rebuild an invalid object map.
+    perf image iostat                Display image IO statistics.
+    perf image iotop                 Display a top-like IO monitor.
+    pool init                        Initialize pool for use by RBD.
+    pool stats                       Display pool statistics.
+    remove (rm)                      Delete an image.
+    resize                           Resize (expand or shrink) image.
+    snap create (snap add)           Create a snapshot.
+    snap list (snap ls)              Dump list of image snapshots.
+    snap protect                     Prevent a snapshot from being deleted.
+    snap purge                       Delete all unprotected snapshots.
+    snap remove (snap rm)            Delete a snapshot.
+    snap rename                      Rename a snapshot.
+    snap rollback (snap revert)      Rollback image to snapshot.
+    snap unprotect                   Allow a snapshot to be deleted.
+    sparsify                         Reclaim space for zeroed image extents.
+    status                           Show the status of this image.
+    trash list (trash ls)            List trash images.
+    trash move (trash mv)            Move an image to the trash.
+    trash purge                      Remove all expired images from trash.
+    trash purge schedule add         Add trash purge schedule.
+    trash purge schedule list        List trash purge schedule.
+    trash purge schedule remove      Remove trash purge schedule.
+    trash purge schedule status      Show trash purge schedule status.
+    trash remove (trash rm)          Remove an image from trash.
+    trash restore                    Restore an image from trash.
+    watch                            Watch events on image.
+
+Optional arguments:
+  -h [ --help ]               Print help message
+  -v [ --version ]            Display version
+  --conf arg                  Ceph config file
+  --keyring arg               Path to keyring
+  -m [ --mon_host ] arg       Monitor host
+  -K [ --keyfile ] arg        Path to secret key
+  -n [ --name ] arg           Client name
+  --id arg                    Client id
+  --cluster arg               Cluster name
+  -p [ --pool ] arg           Pool name
+  --namespace arg             Namespace name
+  --image arg                 Image name
+  --dest-pool arg             Destination pool name
+  --dest-namespace arg        Destination namespace name
+  --dest arg                  Destination image name
+  --image-format arg          Image format [default: 2]
+  --image-feature arg         Image features
+  --image-shared              Shared image
+  --stripe-unit arg           Stripe unit in B/K/M
+  --stripe-count arg          Stripe count
+  --data-pool arg             Data pool
+  --mirror-image-mode arg     Mirror image mode [journal or snapshot]
+  --journal-splay-width arg   Number of active journal objects
+  --journal-object-size arg   Size of journal objects
+  --journal-pool arg          Pool for journal objects
+  --sparse-size arg           Sparse size in B/K/M [default: 4K]
+  --no-progress               Disable progress output
+  --allow-shrink              Permit shrinking
+  --image-id arg              Image id
+  --format arg                Output format (plain, json, xml) [default: plain]
+  --pretty-format             Pretty formatting (json and xml)
+  --read-only                 Set device readonly
+  --snap arg                  Snapshot name
+  --all                       All objects

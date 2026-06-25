@@ -1,0 +1,42 @@
+# Ceph Command Knowledge Base Configuration
+
+# Binaries to discover. Each entry can be a simple name (uses defaults)
+# or a detailed config object.
+binaries:
+  - ceph
+  - rados
+  - rbd
+  - cephadm
+  - ceph-volume
+  - ceph-authtool
+  - ceph-bluestore-tool
+  - ceph-objectstore-tool
+  - cephfs-shell
+  - crushtool
+  - monmaptool
+  - osdmaptool
+
+# Output directory for generated knowledge base
+output_dir: knowledge
+
+# Override the version label (auto-detected by default)
+# version_label: reef
+
+# Logging
+log_level: INFO
+# log_file: generation.log
+
+# Parallel discovery workers (one per binary)
+workers: 4
+
+# Timeout per help command in seconds
+command_timeout: 10
+
+# Resume from last checkpoint if interrupted
+resume: false
+
+# Force regeneration (ignore cache)
+force: false
+
+# Cache directory for resume state
+cache_dir: .cache

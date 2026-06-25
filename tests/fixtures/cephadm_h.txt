@@ -1,0 +1,63 @@
+usage: cephadm [-h] [--image IMAGE] [--docker] [--data-dir DATA_DIR]
+               [--log-dir LOG_DIR] [--logrotate-dir LOGROTATE_DIR]
+               [--sysctl-dir SYSCTL_DIR] [--unit-dir UNIT_DIR]
+               [--verbose] [--timeout TIMEOUT] [--retry RETRY]
+               [--env ENV] [--no-container-init] [--no-cgroups-split]
+               
+               {version,pull,inspect-image,ls,list-networks,adopt,rm-daemon,
+               rm-cluster,run,shell,enter,ceph-volume,zap-osds,
+               unit-install,unit-remove,install,registry-login,
+               gather-facts,host-maintenance,verify-prereqs,
+               prepare-host,add-repo,rm-repo,install-packages,
+               bootstrap,deploy,check-host}
+               ...
+
+Ceph daemon management tool
+
+positional arguments:
+  {version,pull,inspect-image,ls,list-networks,adopt,rm-daemon,rm-cluster,run,shell,enter,ceph-volume,zap-osds,unit-install,unit-remove,install,registry-login,gather-facts,host-maintenance,verify-prereqs,prepare-host,add-repo,rm-repo,install-packages,bootstrap,deploy,check-host}
+    version             Show cephadm version
+    pull                Pull the default container image
+    inspect-image       Inspect local container image
+    ls                  List daemon instances on this host
+    list-networks       List IP networks
+    adopt               Adopt a daemon deployed with a different tool
+    rm-daemon           Remove a daemon
+    rm-cluster          Remove all daemons for a cluster
+    run                 Run a Ceph daemon, in a container, in the foreground
+    shell               Run an interactive shell inside a running daemon container
+    enter               Run an interactive shell inside a running daemon container
+    ceph-volume         Run ceph-volume inside a container
+    zap-osds            Zap OSDs
+    unit-install        Install the daemon systemd unit
+    unit-remove         Remove the daemon systemd unit
+    install             Install packages
+    registry-login      Log host into authenticated registry
+    gather-facts        Gather information about the host
+    host-maintenance    Manage the maintenance state of a host
+    verify-prereqs      Verify that the host meets prerequisites
+    prepare-host        Prepare a host for cephadm use
+    add-repo            Add Ceph package repository
+    rm-repo             Remove Ceph package repository
+    install-packages    Install Ceph packages
+    bootstrap           Bootstrap a new Ceph cluster
+    deploy              Deploy a daemon on the local host
+    check-host          Check host configuration
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --image IMAGE         Container image to use
+  --docker              Use docker instead of podman
+  --data-dir DATA_DIR   Base directory for daemon data (default: /var/lib/ceph)
+  --log-dir LOG_DIR     Base directory for daemon logs (default: /var/log/ceph)
+  --logrotate-dir LOGROTATE_DIR
+                        Location of logrotate configuration files (default: /etc/logrotate.d)
+  --sysctl-dir SYSCTL_DIR
+                        Location of sysctl configuration files (default: /usr/lib/sysctl.d)
+  --unit-dir UNIT_DIR   Base directory for systemd units (default: /etc/systemd/system)
+  --verbose, -v         Show debug-level log messages
+  --timeout TIMEOUT     Timeout in seconds (default: None)
+  --retry RETRY         Max number of retries (default: 15)
+  --env ENV, -e ENV     Set environment variable
+  --no-container-init   Do not run podman/docker with `--init`
+  --no-cgroups-split    Do not run containers with --cgroups=split

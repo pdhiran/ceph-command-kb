@@ -1,0 +1,169 @@
+ usage: ceph [-h] [-c CEPHCONF] [-i INPUT_FILE] [-o OUTPUT_FILE]
+             [--setuser USER] [--setgroup GROUP] [--id CLIENT_ID]
+             [--name CLIENT_NAME] [--cluster CLUSTER]
+             [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug]
+             [--watch-info] [--watch-sec] [--watch-warn] [--watch-error]
+             [-W NUM] [--watch-channel CHANNEL] [--version] [--verbose]
+             [--concise] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}]
+             [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]
+
+Ceph administration tool
+
+ General usage:
+ ==============
+ceph [-h] [-c ceph.conf] [-i input_file] [-o output_file]
+     [--id ID] [--name TYPE.ID] [--cluster NAME]
+     [-s] [-w] [--watch-channel {cluster|audit|cephadm|*}]
+
+ Commands:
+ =========
+auth add                              add auth info for <entity>
+auth caps                             update caps for <name>
+auth del                              delete all caps for <name>
+auth export                           write keyring for requested entity
+auth get                              write keyring file with requested key
+auth get-or-create                    add auth for <entity>
+auth get-or-create-key                get or add auth key
+auth import                           auth import
+auth ls                               list authentication state
+auth print-key                        display requested key
+auth print_key                        display requested key
+auth rm                               remove all caps for <name>
+config dump                           dump all settings
+config generate-minimal-conf          generate a minimal ceph.conf
+config get                            get a configuration value
+config help                           get config setting schema and descriptions
+config log                            list recent history of config changes
+config ls                             list available configuration options
+config reset                          revert a configuration change
+config rm                             revert a configuration change
+config set                            set a configuration value
+config show                           show running configuration
+config show-with-defaults             show running configuration (including compiled-in defaults)
+crash archive                         archive a crash report
+crash archive-all                     archive all new crash reports
+crash info                            show crash report
+crash json_as_roman                   dump crash reports as json
+crash ls                              list crash reports
+crash ls-new                          list new crash reports
+crash post                            post a crash report
+crash prune                           remove crash reports older than <keep> days
+crash rm                              remove a saved crash report
+crash stat                            summarize saved crash reports
+osd blocked-by                        print histogram of which OSDs are blocking their peers
+osd blocklist add                     add (optionally until <expire>) to blocklist
+osd blocklist clear                   clear all blocklisted clients
+osd blocklist ls                      show blocklisted clients
+osd blocklist rm                      remove from blocklist
+osd crush add                         add or update crushmap position and weight
+osd crush add-bucket                  add no-parent bucket to the CRUSH map
+osd crush class create                create crush device class <name>
+osd crush class ls                    list all crush device classes
+osd crush class rename                rename crush device class <srcname> to <dstname>
+osd crush class rm                    remove crush device class <name>
+osd crush dump                        dump crush map
+osd crush get-tunable                 get crush tunable <tunable>
+osd crush ls                          list items beneath a node in the CRUSH tree
+osd crush move                        move existing bucket within the CRUSH map
+osd crush rename-bucket               rename bucket <srcname> to <dstname>
+osd crush reweight                    change <name>'s weight to <weight> in crush map
+osd crush reweight-all                recalculate the weights for the tree
+osd crush reweight-subtree            change all leaf items beneath <name> to <weight>
+osd crush rm                          remove <name> from crush map
+osd crush rule create-replicated      create crush rule <name> for replicated pool
+osd crush rule create-simple          create crush rule <name> to start from <root>
+osd crush rule dump                   dump crush rule <name>
+osd crush rule ls                     list crush rules
+osd crush rule ls-by-class            list all crush rules that reference the same device class
+osd crush rule rename                 rename crush rule <srcname> to <dstname>
+osd crush rule rm                     remove crush rule <name>
+osd crush set                         set crushmap values
+osd crush set-tunable                 set crush tunable <tunable> to <value>
+osd crush show-tunables               show current crush tunables
+osd crush swap-bucket                 swap existing bucket contents from <source> to <dest>
+osd crush tree                        dump crush buckets and items in a tree view
+osd crush weight-set create           create a weight-set for a given pool
+osd crush weight-set dump             dump the weight-set for the given pool
+osd crush weight-set ls               list weight-sets
+osd crush weight-set reweight         set weight for an item in a weight-set
+osd crush weight-set rm               remove the weight-set for a given pool
+osd df                                show OSD utilization
+osd down                              set osd(s) <id> down
+osd dump                              print summary of OSD map
+osd erasure-code-profile get          get erasure code profile <name>
+osd erasure-code-profile ls           list all erasure code profiles
+osd erasure-code-profile rm           remove erasure code profile <name>
+osd erasure-code-profile set          create erasure code profile <name>
+osd find                              find osd <id> in the CRUSH map
+osd getcrushmap                       get CRUSH map
+osd getmap                            get OSD map
+osd in                                set osd(s) <id> in
+osd info                              print osd's {id} metadata
+osd last-stat-seq                     get the last pg stats sequence number reported
+osd ls                                show all OSD ids
+osd lspools                           list pools
+osd map                               find pg for <object> in <pool>
+osd metadata                          fetch metadata for osd {id}
+osd ok-to-stop                        check whether osd(s) can be safely stopped
+osd out                               set osd(s) <id> out
+osd pause                             pause osd
+osd perf                              print dump of OSD perf summary stats
+osd pg-temp                           set pg_temp mapping pgid:[<id> [<id>...]]
+osd pool application disable          disables use of an application <app> on pool <poolname>
+osd pool application enable           enable use of an application <app> on pool <poolname>
+osd pool application get              get value of key <key> of application <app> on pool <poolname>
+osd pool application rm               removes application <app> key <key> on pool <poolname>
+osd pool application set              sets application <app> key <key> to <value> on pool <poolname>
+osd pool autoscale-status             report on pool pg_num sizing recommendation
+osd pool cancel-force-backfill        restore normal recovery priority of specified pool <who>
+osd pool cancel-force-recovery        restore normal recovery priority of specified pool <who>
+osd pool create                       create pool
+osd pool deep-scrub                   initiate deep-scrub on pool <who>
+osd pool delete                       delete pool
+osd pool force-backfill               force backfill of specified pool <who> first
+osd pool force-recovery               force recovery of specified pool <who> first
+osd pool get                          get pool parameter <var>
+osd pool get-quota                    obtain object or byte limits for pool
+osd pool ls                           list pools
+osd pool mksnap                       make snapshot <snap> in <pool>
+osd pool rename                       rename <srcpool> to <destpool>
+osd pool repair                       initiate repair on pool <who>
+osd pool rm                           remove pool
+osd pool rmsnap                       remove snapshot <snap> from <pool>
+osd pool scrub                        initiate scrub on pool <who>
+osd pool set                          set pool parameter <var> to <val>
+osd pool set-quota                    set object or byte limit on pool
+osd pool stats                        obtain stats from all pools or from specified pool
+osd primary-affinity                  adjust osd primary-affinity from 0.0 <= <weight> <= 1.0
+osd primary-temp                      set primary_temp mapping pgid:<id>|-1
+osd purge                             purge all osd data from the monitors
+osd repair                            initiate repair on osd
+osd reweight                          reweight osd to 0.0 < <weight> < 1.0
+osd reweight-by-pg                    reweight OSDs by PG distribution
+osd reweight-by-utilization           reweight OSDs by utilization
+osd rm                                remove osd(s) <id>
+osd safe-to-destroy                   check whether osd(s) can be safely destroyed
+osd set                               set <key>
+osd stat                              print summary of OSD map
+osd status                            print OSD status
+osd tree                              print OSD tree
+osd tree-from                         print OSD tree from a specific bucket
+osd unpause                           unpause osd
+osd unset                             unset <key>
+osd utilization                       get basic pg distribution stats
+pg debug                              show debug info about pgs
+pg deep-scrub                         start deep-scrub on <pgid>
+pg dump                               show human-readable versions of pg map
+pg dump_json                          show human-readable version of pg map in json only
+pg dump_pools_json                    show pg pools info in json only
+pg dump_stuck                         show information about stuck pgs
+pg getmap                             get binary pg map to -o/stdout
+pg ls                                 list pg with specific pool, osd, state
+pg ls-by-osd                          list pg on osd [osd]
+pg ls-by-pool                         list pg with pool = [poolname]
+pg ls-by-primary                      list pg with primary = [osd]
+pg map                                show mapping of pg to osds
+pg repair                             start repair on <pgid>
+pg repeer                             force a PG to repeer
+pg scrub                              start scrub on <pgid>
+pg stat                               show placement group status
