@@ -372,7 +372,7 @@
       "binary": "ceph",
       "description": "Resets the local list of alerts that were sent to Call Home to allow for existing alerts to be",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-callhome-reset.md"
     },
@@ -636,7 +636,7 @@
       "binary": "ceph",
       "description": "Set user for SSHing to cluster hosts, passwordless sudo will be needed for non-root users.",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-cephadm-set-user.md"
     },
@@ -724,7 +724,7 @@
       "binary": "ceph",
       "description": "Set a configuration option for one or more entities",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-config-set.md"
     },
@@ -844,7 +844,7 @@
       "binary": "ceph",
       "description": "Show new and archived crash dumps",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-crash-ls.md"
     },
@@ -852,7 +852,7 @@
       "binary": "ceph",
       "description": "Show new crash dumps",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-crash-ls-new.md"
     },
@@ -972,7 +972,7 @@
       "binary": "ceph",
       "description": "Create a user. Password read from -i <file>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 9,
       "markdown_file": "ceph-dashboard-ac-user-create.md"
     },
@@ -1020,7 +1020,7 @@
       "binary": "ceph",
       "description": "Set user password from -i <file>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-dashboard-ac-user-set-password.md"
     },
@@ -2316,7 +2316,7 @@
       "binary": "ceph",
       "description": "Enable or disable the device light. Default type is `ident` 'Usage: device light (on|off)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-device-light.md"
     },
@@ -2516,7 +2516,7 @@
       "binary": "ceph",
       "description": "bring the file system down and all of its ranks",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-fs-fail.md"
     },
@@ -2532,7 +2532,7 @@
       "binary": "ceph",
       "description": "Set a global CephFS flag",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-fs-flag.md"
     },
@@ -2604,7 +2604,7 @@
       "binary": "ceph",
       "description": "make new filesystem using named pools <metadata> and <data>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 30,
       "argument_count": 8,
       "markdown_file": "ceph-fs-new.md"
     },
@@ -2620,7 +2620,7 @@
       "binary": "ceph",
       "description": "Manage quiesce sets of subvolumes",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 40,
       "argument_count": 8,
       "markdown_file": "ceph-fs-quiesce.md"
     },
@@ -2628,7 +2628,7 @@
       "binary": "ceph",
       "description": "rename a ceph file system",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-fs-rename.md"
     },
@@ -2644,7 +2644,7 @@
       "binary": "ceph",
       "description": "disaster recovery only: reset to a single-MDS map",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-fs-reset.md"
     },
@@ -2652,7 +2652,7 @@
       "binary": "ceph",
       "description": "disable the named filesystem",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-fs-rm.md"
     },
@@ -2668,7 +2668,7 @@
       "binary": "ceph",
       "description": "set the default to the named filesystem",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 6,
       "markdown_file": "ceph-fs-set.md"
     },
@@ -2716,7 +2716,7 @@
       "binary": "ceph",
       "description": "Get current snapshot schedule for <path>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 31,
       "argument_count": 5,
       "markdown_file": "ceph-fs-snap-schedule-list.md"
     },
@@ -2756,7 +2756,7 @@
       "binary": "ceph",
       "description": "List current snapshot schedules",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 8,
       "markdown_file": "ceph-fs-snap-schedule-status.md"
     },
@@ -2772,7 +2772,7 @@
       "binary": "ceph",
       "description": "Show the status of a CephFS filesystem",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-fs-status.md"
     },
@@ -2780,7 +2780,7 @@
       "binary": "ceph",
       "description": "List auth IDs that have access to a subvolume",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 22,
       "markdown_file": "ceph-fs-subvolume.md"
     },
@@ -2788,7 +2788,7 @@
       "binary": "ceph",
       "description": "List auth IDs that have access to a subvolume",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 8,
       "markdown_file": "ceph-fs-subvolume-authorize.md"
     },
@@ -2836,7 +2836,7 @@
       "binary": "ceph",
       "description": "Create a CephFS subvolume in a volume, and optionally, with a specific size (in bytes), a",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 12,
       "markdown_file": "ceph-fs-subvolume-create.md"
     },
@@ -2980,7 +2980,7 @@
       "binary": "ceph",
       "description": "Remove custom metadata (key-value) associated with the key of a CephFS subvolume in a volume,",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 7,
       "markdown_file": "ceph-fs-subvolume-metadata-rm.md"
     },
@@ -3004,7 +3004,7 @@
       "binary": "ceph",
       "description": "Resize a CephFS subvolume",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 7,
       "markdown_file": "ceph-fs-subvolume-resize.md"
     },
@@ -3012,7 +3012,7 @@
       "binary": "ceph",
       "description": "Delete a CephFS subvolume in a volume, and optionally, in a specific subvolume group, force",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 6,
       "markdown_file": "ceph-fs-subvolume-rm.md"
     },
@@ -3116,7 +3116,7 @@
       "binary": "ceph",
       "description": "Delete a snapshot of a CephFS subvolume in a volume, and optionally, in a specific subvolume",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 7,
       "markdown_file": "ceph-fs-subvolume-snapshot-rm.md"
     },
@@ -3196,7 +3196,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 9,
       "markdown_file": "ceph-fs-subvolumegroup-create.md"
     },
@@ -3244,7 +3244,7 @@
       "binary": "ceph",
       "description": "Resize a CephFS subvolume group",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-fs-subvolumegroup-resize.md"
     },
@@ -3252,7 +3252,7 @@
       "binary": "ceph",
       "description": "Delete a CephFS subvolume group in a volume",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-fs-subvolumegroup-rm.md"
     },
@@ -3284,7 +3284,7 @@
       "binary": "ceph",
       "description": "Delete a snapshot of a CephFS subvolume group in a volume",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-fs-subvolumegroup-snapshot-rm.md"
     },
@@ -3316,7 +3316,7 @@
       "binary": "ceph",
       "description": "Get the information of a CephFS volume",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-fs-volume-info.md"
     },
@@ -3332,7 +3332,7 @@
       "binary": "ceph",
       "description": "Rename a CephFS volume by passing --yes-i-really-mean-it flag",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-fs-volume-rename.md"
     },
@@ -3364,7 +3364,7 @@
       "binary": "ceph",
       "description": "mute health alert",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-health-mute.md"
     },
@@ -3444,7 +3444,7 @@
       "binary": "ceph",
       "description": "Get IO rates",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-iostat.md"
     },
@@ -3540,7 +3540,7 @@
       "binary": "ceph",
       "description": "Mark MDS failed: trigger a failover if a standby is available",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-mds-fail.md"
     },
@@ -3652,7 +3652,7 @@
       "binary": "ceph",
       "description": "enable mgr module",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-mgr-module-enable.md"
     },
@@ -3660,7 +3660,7 @@
       "binary": "ceph",
       "description": "force disable a always-on mgr module",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-mgr-module-force.md"
     },
@@ -3868,7 +3868,7 @@
       "binary": "ceph",
       "description": "disable stretch mode, reverting to normal peering rules",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-mon-disable_stretch_mode.md"
     },
@@ -3900,7 +3900,7 @@
       "binary": "ceph",
       "description": "list available mon map features to be set/unset",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-mon-feature.md"
     },
@@ -3908,7 +3908,7 @@
       "binary": "ceph",
       "description": "list available mon map features to be set/unset",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-mon-feature-ls.md"
     },
@@ -3916,7 +3916,7 @@
       "binary": "ceph",
       "description": "set provided feature on mon map",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-mon-feature-set.md"
     },
@@ -4036,7 +4036,7 @@
       "binary": "ceph",
       "description": "switch the stretch tiebreaker to be the named mon",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-mon-set_new_tiebreaker.md"
     },
@@ -4108,7 +4108,7 @@
       "binary": "ceph",
       "description": "Create an NFS Cluster",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 36,
       "argument_count": 7,
       "markdown_file": "ceph-nfs-cluster-create.md"
     },
@@ -4124,7 +4124,7 @@
       "binary": "ceph",
       "description": "Retrieve configuration from EXPORT DEFAULT block (global fallback for all exports).",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-cluster-get-export-default.md"
     },
@@ -4132,7 +4132,7 @@
       "binary": "ceph",
       "description": "Displays NFS Cluster info",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-cluster-info.md"
     },
@@ -4140,7 +4140,7 @@
       "binary": "ceph",
       "description": "List NFS Clusters",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-nfs-cluster-ls.md"
     },
@@ -4204,7 +4204,7 @@
       "binary": "ceph",
       "description": "Get QOS configuration of NFS cluster",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-cluster-qos-get.md"
     },
@@ -4228,7 +4228,7 @@
       "binary": "ceph",
       "description": "Update configuration in EXPORT DEFAULT block (global fallback for all exports).",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-cluster-set-export-default.md"
     },
@@ -4236,7 +4236,7 @@
       "binary": "ceph",
       "description": "Create or update an export by `-i <json_or_ganesha_export_file>`",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 12,
       "markdown_file": "ceph-nfs-export.md"
     },
@@ -4244,7 +4244,7 @@
       "binary": "ceph",
       "description": "Create or update an export by `-i <json_or_ganesha_export_file>`",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 6,
       "markdown_file": "ceph-nfs-export-apply.md"
     },
@@ -4252,7 +4252,7 @@
       "binary": "ceph",
       "description": "export_delegations: Delegation at export level (applies to",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 32,
       "argument_count": 10,
       "markdown_file": "ceph-nfs-export-create.md"
     },
@@ -4260,7 +4260,7 @@
       "binary": "ceph",
       "description": "export_delegations: Delegation at export level (applies to",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 32,
       "argument_count": 8,
       "markdown_file": "ceph-nfs-export-create-cephfs.md"
     },
@@ -4268,7 +4268,7 @@
       "binary": "ceph",
       "description": "export_delegations: Delegation at export level (applies to all",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 31,
       "argument_count": 8,
       "markdown_file": "ceph-nfs-export-create-rgw.md"
     },
@@ -4276,7 +4276,7 @@
       "binary": "ceph",
       "description": "Delete a cephfs export (DEPRECATED)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-export-delete.md"
     },
@@ -4284,7 +4284,7 @@
       "binary": "ceph",
       "description": "Fetch a export of a NFS cluster given the pseudo path/binding (DEPRECATED)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-nfs-export-get.md"
     },
@@ -4292,7 +4292,7 @@
       "binary": "ceph",
       "description": "Fetch a export of a NFS cluster given the pseudo path/binding",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-nfs-export-info.md"
     },
@@ -4300,7 +4300,7 @@
       "binary": "ceph",
       "description": "List exports of a NFS cluster",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-export-ls.md"
     },
@@ -4308,7 +4308,7 @@
       "binary": "ceph",
       "description": "Disable NFS export QOS bandwidth control",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 7,
       "markdown_file": "ceph-nfs-export-qos.md"
     },
@@ -4316,7 +4316,7 @@
       "binary": "ceph",
       "description": "Disable NFS export QOS bandwidth control",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-export-qos-disable.md"
     },
@@ -4324,7 +4324,7 @@
       "binary": "ceph",
       "description": "Disable NFS export QOS bandwidth control",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-export-qos-disable-bandwidth_control.md"
     },
@@ -4332,7 +4332,7 @@
       "binary": "ceph",
       "description": "Disable NFS export QOS IOPS control",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-export-qos-disable-ops_control.md"
     },
@@ -4340,7 +4340,7 @@
       "binary": "ceph",
       "description": "enable QOS bandwidth control for NFS export and set different bandwidth",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 33,
       "argument_count": 7,
       "markdown_file": "ceph-nfs-export-qos-enable.md"
     },
@@ -4348,7 +4348,7 @@
       "binary": "ceph",
       "description": "enable QOS bandwidth control for NFS export and set different bandwidth",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 33,
       "argument_count": 6,
       "markdown_file": "ceph-nfs-export-qos-enable-bandwidth_control.md"
     },
@@ -4356,7 +4356,7 @@
       "binary": "ceph",
       "description": "enable QOS IOPS control for NFS export",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-nfs-export-qos-enable-ops_control.md"
     },
@@ -4364,7 +4364,7 @@
       "binary": "ceph",
       "description": "Get NFS export QOS config",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-nfs-export-qos-get.md"
     },
@@ -4372,7 +4372,7 @@
       "binary": "ceph",
       "description": "Remove a cephfs export",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-nfs-export-rm.md"
     },
@@ -4380,7 +4380,7 @@
       "binary": "ceph",
       "description": "This command is intended to update export-level",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-nfs-export-update.md"
     },
@@ -4564,7 +4564,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 4,
       "markdown_file": "ceph-nvmeof-gateway-set_io_stats_mode.md"
     },
@@ -4636,7 +4636,7 @@
       "binary": "ceph",
       "description": "Enable or disable IO statistics collection",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 4,
       "markdown_file": "ceph-nvmeof-gw-set_io_stats_mode.md"
     },
@@ -4716,7 +4716,7 @@
       "binary": "ceph",
       "description": "List all allowed hosts for an NVMeoF subsystem",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 5,
       "markdown_file": "ceph-nvmeof-host-list.md"
     },
@@ -4724,7 +4724,7 @@
       "binary": "ceph",
       "description": "Create a new NVMeoF listener",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 11,
       "markdown_file": "ceph-nvmeof-listener.md"
     },
@@ -4732,7 +4732,7 @@
       "binary": "ceph",
       "description": "Create a new NVMeoF listener",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 10,
       "markdown_file": "ceph-nvmeof-listener-add.md"
     },
@@ -4740,7 +4740,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 9,
       "markdown_file": "ceph-nvmeof-listener-del.md"
     },
@@ -4756,7 +4756,7 @@
       "binary": "ceph",
       "description": "Create a new NVMeoF namespace.",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 40,
       "argument_count": 22,
       "markdown_file": "ceph-nvmeof-namespace.md"
     },
@@ -4764,7 +4764,7 @@
       "binary": "ceph",
       "description": "Create a new NVMeoF namespace.",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 40,
       "argument_count": 10,
       "markdown_file": "ceph-nvmeof-namespace-add.md"
     },
@@ -4772,7 +4772,7 @@
       "binary": "ceph",
       "description": "Adds a host to the specified NVMeoF namespace",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 7,
       "markdown_file": "ceph-nvmeof-namespace-add_host.md"
     },
@@ -4788,7 +4788,7 @@
       "binary": "ceph",
       "description": "changes the visibility of the specified NVMeoF namespace to all or selected hosts",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 30,
       "argument_count": 7,
       "markdown_file": "ceph-nvmeof-namespace-change_visibility.md"
     },
@@ -4852,7 +4852,7 @@
       "binary": "ceph",
       "description": "Enable or disable namespace auto resize when RBD image is resized",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 6,
       "markdown_file": "ceph-nvmeof-namespace-set_auto_resize.md"
     },
@@ -4860,7 +4860,7 @@
       "binary": "ceph",
       "description": "set QOS for specified NVMeoF namespace",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 30,
       "argument_count": 10,
       "markdown_file": "ceph-nvmeof-namespace-set_qos.md"
     },
@@ -4876,7 +4876,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 31,
       "argument_count": 10,
       "markdown_file": "ceph-nvmeof-namespace-update.md"
     },
@@ -4884,7 +4884,7 @@
       "binary": "ceph",
       "description": "Create a new NVMeoF namespace.",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 41,
       "argument_count": 22,
       "markdown_file": "ceph-nvmeof-ns.md"
     },
@@ -4892,7 +4892,7 @@
       "binary": "ceph",
       "description": "Create a new NVMeoF namespace.",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 41,
       "argument_count": 10,
       "markdown_file": "ceph-nvmeof-ns-add.md"
     },
@@ -4900,7 +4900,7 @@
       "binary": "ceph",
       "description": "Adds a host to the specified NVMeoF namespace",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 7,
       "markdown_file": "ceph-nvmeof-ns-add_host.md"
     },
@@ -4916,7 +4916,7 @@
       "binary": "ceph",
       "description": "changes the visibility of the specified NVMeoF namespace to all or selected hosts",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 7,
       "markdown_file": "ceph-nvmeof-ns-change_visibility.md"
     },
@@ -4980,7 +4980,7 @@
       "binary": "ceph",
       "description": "Enable or disable namespace auto resize when RBD image is resized",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 6,
       "markdown_file": "ceph-nvmeof-ns-set_auto_resize.md"
     },
@@ -4988,7 +4988,7 @@
       "binary": "ceph",
       "description": "set QOS for specified NVMeoF namespace",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 9,
       "markdown_file": "ceph-nvmeof-ns-set_qos.md"
     },
@@ -5004,7 +5004,7 @@
       "binary": "ceph",
       "description": "Update an existing NVMeoF namespace",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 31,
       "argument_count": 10,
       "markdown_file": "ceph-nvmeof-ns-update.md"
     },
@@ -5028,7 +5028,7 @@
       "binary": "ceph",
       "description": "Get NVMeoF gateway spdk log levels",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 4,
       "markdown_file": "ceph-nvmeof-spdk_log_level-get.md"
     },
@@ -5044,7 +5044,7 @@
       "binary": "ceph",
       "description": "Create a new NVMeoF subsystem",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 33,
       "argument_count": 15,
       "markdown_file": "ceph-nvmeof-subsystem.md"
     },
@@ -5052,7 +5052,7 @@
       "binary": "ceph",
       "description": "Create a new NVMeoF subsystem",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 33,
       "argument_count": 14,
       "markdown_file": "ceph-nvmeof-subsystem-add.md"
     },
@@ -5124,7 +5124,7 @@
       "binary": "ceph",
       "description": "NVMeoF Top CPU Tool",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 30,
       "argument_count": 9,
       "markdown_file": "ceph-nvmeof-top.md"
     },
@@ -5132,7 +5132,7 @@
       "binary": "ceph",
       "description": "NVMeoF Top CPU Tool",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 30,
       "argument_count": 8,
       "markdown_file": "ceph-nvmeof-top-cpu.md"
     },
@@ -5140,7 +5140,7 @@
       "binary": "ceph",
       "description": "NVMeoF Top IO Tool",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 31,
       "argument_count": 9,
       "markdown_file": "ceph-nvmeof-top-io.md"
     },
@@ -5180,7 +5180,7 @@
       "binary": "ceph",
       "description": "Update the size or placement for a service or apply a large yaml spec",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 30,
       "argument_count": 22,
       "markdown_file": "ceph-orch-apply.md"
     },
@@ -5188,7 +5188,7 @@
       "binary": "ceph",
       "description": "Scale an iSCSI service",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 8,
       "markdown_file": "ceph-orch-apply-iscsi.md"
     },
@@ -5196,7 +5196,7 @@
       "binary": "ceph",
       "description": "Update the number of MDS instances for the given fs_name",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 5,
       "markdown_file": "ceph-orch-apply-mds.md"
     },
@@ -5204,7 +5204,7 @@
       "binary": "ceph",
       "description": "Add a cluster gateway service (cephadm only)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 32,
       "argument_count": 5,
       "markdown_file": "ceph-orch-apply-mgmt-gateway.md"
     },
@@ -5212,7 +5212,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 6,
       "markdown_file": "ceph-orch-apply-nfs.md"
     },
@@ -5220,7 +5220,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 31,
       "argument_count": 4,
       "markdown_file": "ceph-orch-apply-nvmeof.md"
     },
@@ -5228,7 +5228,7 @@
       "binary": "ceph",
       "description": "Add a cluster gateway service (cephadm only)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 5,
       "markdown_file": "ceph-orch-apply-oauth2-proxy.md"
     },
@@ -5236,7 +5236,7 @@
       "binary": "ceph",
       "description": "Create OSD daemon(s) on all available devices",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 30,
       "argument_count": 3,
       "markdown_file": "ceph-orch-apply-osd.md"
     },
@@ -5244,7 +5244,7 @@
       "binary": "ceph",
       "description": "Update the number of RGW instances for the given zone",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 34,
       "argument_count": 7,
       "markdown_file": "ceph-orch-apply-rgw.md"
     },
@@ -5252,7 +5252,7 @@
       "binary": "ceph",
       "description": "Apply an SMB network file system gateway service configuration.",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 10,
       "markdown_file": "ceph-orch-apply-smb.md"
     },
@@ -5260,7 +5260,7 @@
       "binary": "ceph",
       "description": "Add a Prometheus to SNMP gateway service (cephadm only)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 7,
       "markdown_file": "ceph-orch-apply-snmp-gateway.md"
     },
@@ -5276,7 +5276,7 @@
       "binary": "ceph",
       "description": "Sets the cert from the --cert argument or from -i <cert-file>.",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 10,
       "markdown_file": "ceph-orch-certmgr.md"
     },
@@ -5284,7 +5284,7 @@
       "binary": "ceph",
       "description": "Sets the cert from the --cert argument or from -i <cert-file>.",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 8,
       "markdown_file": "ceph-orch-certmgr-cert.md"
     },
@@ -5292,7 +5292,7 @@
       "binary": "ceph",
       "description": "Sets the cert from the --cert argument or from -i <cert-file>.",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 6,
       "markdown_file": "ceph-orch-certmgr-cert-set.md"
     },
@@ -5300,7 +5300,7 @@
       "binary": "ceph",
       "description": "Sets the cert-key pair from -i <pem-file>, which must be a valid PEM file containing both the",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 31,
       "argument_count": 6,
       "markdown_file": "ceph-orch-certmgr-cert-key.md"
     },
@@ -5308,7 +5308,7 @@
       "binary": "ceph",
       "description": "Sets the key from the --key argument or from -i <key-file>.",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 6,
       "markdown_file": "ceph-orch-certmgr-key.md"
     },
@@ -5340,7 +5340,7 @@
       "binary": "ceph",
       "description": "Add or update client keyring under cephadm management",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 7,
       "markdown_file": "ceph-orch-client-keyring-set.md"
     },
@@ -5348,7 +5348,7 @@
       "binary": "ceph",
       "description": "Start, stop, restart, redeploy, reconfig, or rotate-key for a specific daemon",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 16,
       "markdown_file": "ceph-orch-daemon.md"
     },
@@ -5396,7 +5396,7 @@
       "binary": "ceph",
       "description": "Create OSD daemon(s) on specified host and device(s) (e.g., ceph orch daemon add osd myhost:/",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-orch-daemon-add-osd.md"
     },
@@ -5404,7 +5404,7 @@
       "binary": "ceph",
       "description": "Start RGW daemon(s)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 6,
       "markdown_file": "ceph-orch-daemon-add-rgw.md"
     },
@@ -5420,7 +5420,7 @@
       "binary": "ceph",
       "description": "Remove specific daemon(s)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-orch-daemon-rm.md"
     },
@@ -5436,7 +5436,7 @@
       "binary": "ceph",
       "description": "List devices on a host",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 6,
       "markdown_file": "ceph-orch-device.md"
     },
@@ -5444,7 +5444,7 @@
       "binary": "ceph",
       "description": "List devices on a host",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 4,
       "markdown_file": "ceph-orch-device-ls.md"
     },
@@ -5452,7 +5452,7 @@
       "binary": "ceph",
       "description": "Perform all required operations in order to replace a device.",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 5,
       "markdown_file": "ceph-orch-device-replace.md"
     },
@@ -5460,7 +5460,7 @@
       "binary": "ceph",
       "description": "Zap (erase!) a device so it can be re-used",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-orch-device-zap.md"
     },
@@ -5476,7 +5476,7 @@
       "binary": "ceph",
       "description": "Enable the call-home-agent module",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-orch-enable-call-home.md"
     },
@@ -5500,7 +5500,7 @@
       "binary": "ceph",
       "description": "Reboot a host",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-orch-hardware-powercycle.md"
     },
@@ -5508,7 +5508,7 @@
       "binary": "ceph",
       "description": "Shutdown a host",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 4,
       "markdown_file": "ceph-orch-hardware-shutdown.md"
     },
@@ -5516,7 +5516,7 @@
       "binary": "ceph",
       "description": ":param hostname: hostname",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-orch-hardware-status.md"
     },
@@ -5524,7 +5524,7 @@
       "binary": "ceph",
       "description": "Add a host",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 9,
       "markdown_file": "ceph-orch-host.md"
     },
@@ -5532,7 +5532,7 @@
       "binary": "ceph",
       "description": "Add a host",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 7,
       "markdown_file": "ceph-orch-host-add.md"
     },
@@ -5540,7 +5540,7 @@
       "binary": "ceph",
       "description": "drain all daemons from a host",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 4,
       "markdown_file": "ceph-orch-host-drain.md"
     },
@@ -5572,7 +5572,7 @@
       "binary": "ceph",
       "description": "Remove a host label",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-orch-host-label-rm.md"
     },
@@ -5580,7 +5580,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 4,
       "markdown_file": "ceph-orch-host-ls.md"
     },
@@ -5588,7 +5588,7 @@
       "binary": "ceph",
       "description": "Prepare a host for maintenance by shutting down and disabling all Ceph daemons (cephadm only)",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 4,
       "markdown_file": "ceph-orch-host-maintenance.md"
     },
@@ -5596,7 +5596,7 @@
       "binary": "ceph",
       "description": "Prepare a host for maintenance by shutting down and disabling all Ceph daemons (cephadm only)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 4,
       "markdown_file": "ceph-orch-host-maintenance-enter.md"
     },
@@ -5604,7 +5604,7 @@
       "binary": "ceph",
       "description": "Return a host from maintenance, restarting all Ceph daemons (cephadm only)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 4,
       "markdown_file": "ceph-orch-host-maintenance-exit.md"
     },
@@ -5620,7 +5620,7 @@
       "binary": "ceph",
       "description": "Perform a disk rescan on a host",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-orch-host-rescan.md"
     },
@@ -5628,7 +5628,7 @@
       "binary": "ceph",
       "description": "Remove a host",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 29,
       "argument_count": 4,
       "markdown_file": "ceph-orch-host-rm.md"
     },
@@ -5652,7 +5652,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 5,
       "markdown_file": "ceph-orch-ls.md"
     },
@@ -5676,7 +5676,7 @@
       "binary": "ceph",
       "description": "Rebuild OSD. OSD must have been created after this command was added",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-orch-osd-rebuild.md"
     },
@@ -5684,7 +5684,7 @@
       "binary": "ceph",
       "description": "Remove OSD daemons",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 30,
       "argument_count": 4,
       "markdown_file": "ceph-orch-osd-rm.md"
     },
@@ -5724,7 +5724,7 @@
       "binary": "ceph",
       "description": "List daemons known to orchestrator",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 30,
       "argument_count": 5,
       "markdown_file": "ceph-orch-ps.md"
     },
@@ -5740,7 +5740,7 @@
       "binary": "ceph",
       "description": "Remove a service",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-orch-rm.md"
     },
@@ -5788,7 +5788,7 @@
       "binary": "ceph",
       "description": "Report configured backend and its status",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-orch-status.md"
     },
@@ -5796,7 +5796,7 @@
       "binary": "ceph",
       "description": "Add or update a tuned profile",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-orch-tuned-profile.md"
     },
@@ -5836,7 +5836,7 @@
       "binary": "ceph",
       "description": "Check for available versions (or tags) we can upgrade to",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 4,
       "markdown_file": "ceph-orch-upgrade-ls.md"
     },
@@ -5860,7 +5860,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 34,
       "argument_count": 6,
       "markdown_file": "ceph-orch-upgrade-start.md"
     },
@@ -5868,7 +5868,7 @@
       "binary": "ceph",
       "description": "Check the status of any potential ongoing upgrade operation",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-orch-upgrade-status.md"
     },
@@ -6228,7 +6228,7 @@
       "binary": "ceph",
       "description": "swap existing bucket contents from (orphan) bucket <source> and <target>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-osd-crush-swap-bucket.md"
     },
@@ -6236,7 +6236,7 @@
       "binary": "ceph",
       "description": "dump crush buckets and items in a tree view",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-osd-crush-tree.md"
     },
@@ -6340,7 +6340,7 @@
       "binary": "ceph",
       "description": "mark osd as being destroyed. Keeps the ID intact (allowing reuse), but removes cephx keys,",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 3,
       "markdown_file": "ceph-osd-destroy.md"
     },
@@ -6356,7 +6356,7 @@
       "binary": "ceph",
       "description": "set osd(s) <id> [<id>...] down, or use <any|all> to set all osds down",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-osd-down.md"
     },
@@ -6404,7 +6404,7 @@
       "binary": "ceph",
       "description": "create erasure code profile <name> with [<key[=value]> ...] pairs. Add a --force at the end to",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 5,
       "markdown_file": "ceph-osd-erasure-code-profile-set.md"
     },
@@ -6420,7 +6420,7 @@
       "binary": "ceph",
       "description": "force creation of pg <pgid>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-osd-force-create-pg.md"
     },
@@ -6428,7 +6428,7 @@
       "binary": "ceph",
       "description": "force a healthy stretch mode, requiring the full number of CRUSH buckets to peer and letting",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-osd-force_healthy_stretch_mode.md"
     },
@@ -6436,7 +6436,7 @@
       "binary": "ceph",
       "description": "try and force a recovery stretch mode, increasing the pool size to its non-failure value if",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-osd-force_recovery_stretch_mode.md"
     },
@@ -6500,7 +6500,7 @@
       "binary": "ceph",
       "description": "mark osd as permanently lost. THIS DESTROYS DATA IF NO MORE REPLICAS EXIST, BE CAREFUL",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-osd-lost.md"
     },
@@ -6660,7 +6660,7 @@
       "binary": "ceph",
       "description": "disables use of an application <app> on pool <poolname>",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 34,
       "markdown_file": "ceph-osd-pool.md"
     },
@@ -6668,7 +6668,7 @@
       "binary": "ceph",
       "description": "disables use of an application <app> on pool <poolname>",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 8,
       "markdown_file": "ceph-osd-pool-application.md"
     },
@@ -6676,7 +6676,7 @@
       "binary": "ceph",
       "description": "disables use of an application <app> on pool <poolname>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-osd-pool-application-disable.md"
     },
@@ -6684,7 +6684,7 @@
       "binary": "ceph",
       "description": "enable use of an application <app> [cephfs,rbd,rgw] on pool <poolname>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-osd-pool-application-enable.md"
     },
@@ -6716,7 +6716,7 @@
       "binary": "ceph",
       "description": "report on pool pg_num sizing recommendation and intent",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-osd-pool-autoscale-status.md"
     },
@@ -6756,7 +6756,7 @@
       "binary": "ceph",
       "description": "create pool",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 13,
       "markdown_file": "ceph-osd-pool-create.md"
     },
@@ -6844,7 +6844,7 @@
       "binary": "ceph",
       "description": "rename <srcpool> to <destpool>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-osd-pool-rename.md"
     },
@@ -6860,7 +6860,7 @@
       "binary": "ceph",
       "description": "remove snapshot <snap> from <pool>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-osd-pool-rm.md"
     },
@@ -6884,7 +6884,7 @@
       "binary": "ceph",
       "description": "set pool parameter <var> to <val>",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 7,
       "markdown_file": "ceph-osd-pool-set.md"
     },
@@ -6924,7 +6924,7 @@
       "binary": "ceph",
       "description": "make the pool stretched across the specified number of CRUSH buckets",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 10,
       "markdown_file": "ceph-osd-pool-stretch.md"
     },
@@ -6932,7 +6932,7 @@
       "binary": "ceph",
       "description": "make the pool stretched across the specified number of CRUSH buckets",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 10,
       "markdown_file": "ceph-osd-pool-stretch-set.md"
     },
@@ -6980,7 +6980,7 @@
       "binary": "ceph",
       "description": "purge all osd data from the monitors including the OSD id and CRUSH position",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 3,
       "markdown_file": "ceph-osd-purge.md"
     },
@@ -6988,7 +6988,7 @@
       "binary": "ceph",
       "description": "purge all traces of an OSD that was partially created but never started",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-osd-purge-new.md"
     },
@@ -7100,7 +7100,7 @@
       "binary": "ceph",
       "description": "set <key>",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 10,
       "markdown_file": "ceph-osd-set.md"
     },
@@ -7108,7 +7108,7 @@
       "binary": "ceph",
       "description": "Note, crimson-osd is not yet considered",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 3,
       "markdown_file": "ceph-osd-set-allow-crimson.md"
     },
@@ -7148,7 +7148,7 @@
       "binary": "ceph",
       "description": "set the minimum client version we will maintain compatibility with",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-osd-set-require-min-compat-client.md"
     },
@@ -7180,7 +7180,7 @@
       "binary": "ceph",
       "description": "Show the status of OSDs within a bucket, or all",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-osd-status.md"
     },
@@ -7212,7 +7212,7 @@
       "binary": "ceph",
       "description": "add the tier <tierpool> (the second one) to base pool <pool> (the first one)",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 7,
       "markdown_file": "ceph-osd-tier.md"
     },
@@ -7220,7 +7220,7 @@
       "binary": "ceph",
       "description": "add the tier <tierpool> (the second one) to base pool <pool> (the first one)",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-osd-tier-add.md"
     },
@@ -7708,7 +7708,7 @@
       "binary": "ceph",
       "description": "Bootstrap new rgw realm, zonegroup, and zone",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 12,
       "markdown_file": "ceph-rgw-realm.md"
     },
@@ -7716,7 +7716,7 @@
       "binary": "ceph",
       "description": "Bootstrap new rgw realm, zonegroup, and zone",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 28,
       "argument_count": 9,
       "markdown_file": "ceph-rgw-realm-bootstrap.md"
     },
@@ -7724,7 +7724,7 @@
       "binary": "ceph",
       "description": "Bootstrap new rgw zone that syncs with existing zone",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-rgw-realm-reconcile.md"
     },
@@ -7756,7 +7756,7 @@
       "binary": "ceph",
       "description": "Bootstrap new rgw zone that syncs with zone on another cluster in the same realm",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 8,
       "markdown_file": "ceph-rgw-zone.md"
     },
@@ -7804,7 +7804,7 @@
       "binary": "ceph",
       "description": "Create an smb cluster",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 12,
       "markdown_file": "ceph-smb-cluster.md"
     },
@@ -7812,7 +7812,7 @@
       "binary": "ceph",
       "description": "Create an smb cluster",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 12,
       "markdown_file": "ceph-smb-cluster-create.md"
     },
@@ -7820,7 +7820,7 @@
       "binary": "ceph",
       "description": "List smb clusters by ID",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 4,
       "markdown_file": "ceph-smb-cluster-ls.md"
     },
@@ -7828,7 +7828,7 @@
       "binary": "ceph",
       "description": "Remove an smb cluster",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-smb-cluster-rm.md"
     },
@@ -7836,7 +7836,7 @@
       "binary": "ceph",
       "description": "List smb shares in a cluster by ID",
       "has_subcommands": true,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 16,
       "markdown_file": "ceph-smb-share.md"
     },
@@ -7844,7 +7844,7 @@
       "binary": "ceph",
       "description": "============== [--setuser SETUSER] [--setgroup SETGROUP] [--id CLIENT_ID] [--name CLIENT_NAME] [--cluster CLUSTER] [--admin-daemon ADMIN_SOCKET] [-s] [-w] [--watch-debug] [--watch-info] [--watch-sec] [--watch-warn] [--watch-error] [-W WATCH_CHANNEL] [--version] [--verbose] [--concise] [--daemon-output-file DAEMON_OUTPUT_FILE] [-f {json,json-pretty,xml,xml-pretty,plain,yaml}] [--connect-timeout CLUSTER_TIMEOUT] [--block] [--period PERIOD]",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 10,
       "markdown_file": "ceph-smb-share-create.md"
     },
@@ -7852,7 +7852,7 @@
       "binary": "ceph",
       "description": "List smb shares in a cluster by ID",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-smb-share-ls.md"
     },
@@ -7860,7 +7860,7 @@
       "binary": "ceph",
       "description": "Remove an smb share",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 6,
       "markdown_file": "ceph-smb-share-rm.md"
     },
@@ -7868,7 +7868,7 @@
       "binary": "ceph",
       "description": "Update QoS settings for a CephFS share",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 12,
       "markdown_file": "ceph-smb-share-update.md"
     },
@@ -7876,7 +7876,7 @@
       "binary": "ceph",
       "description": "Show resources fetched from the local config store based on resource type or resource type and",
       "has_subcommands": false,
-      "flag_count": 26,
+      "flag_count": 27,
       "argument_count": 5,
       "markdown_file": "ceph-smb-show.md"
     },
@@ -12331,10 +12331,24 @@
       "ceph versions"
     ],
     "--all": [
+      "ceph fs quiesce",
       "rbd children"
+    ],
+    "--all-available-devices": [
+      "ceph orch apply osd"
+    ],
+    "--all-log-flags": [
+      "ceph nvmeof spdk_log_level get"
     ],
     "--allocator": [
       "ceph-bluestore-tool"
+    ],
+    "--allow-dangerous-metadata-overlay": [
+      "ceph fs new"
+    ],
+    "--allow-existing-id": [
+      "ceph fs subvolume",
+      "ceph fs subvolume authorize"
     ],
     "--allow-fqdn-hostname": [
       "cephadm bootstrap"
@@ -12354,8 +12368,24 @@
     "--apply-spec": [
       "cephadm bootstrap"
     ],
+    "--auto-resize-enabled": [
+      "ceph nvmeof namespace set_auto_resize",
+      "ceph nvmeof ns set_auto_resize"
+    ],
+    "--automatically-accept-license": [
+      "ceph orch upgrade start"
+    ],
+    "--await": [
+      "ceph fs quiesce"
+    ],
+    "--await_for": [
+      "ceph fs quiesce"
+    ],
     "--bdev-type": [
       "ceph-bluestore-tool"
+    ],
+    "--bind_addrs": [
+      "ceph nfs cluster create"
     ],
     "--block": [
       "ceph",
@@ -13364,8 +13394,17 @@
       "ceph time-sync-status",
       "ceph versions"
     ],
+    "--block_size": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add"
+    ],
     "--bucket-tree": [
       "crushtool"
+    ],
+    "--bulk": [
+      "ceph osd pool create"
     ],
     "--call-home-config": [
       "cephadm bootstrap"
@@ -13373,8 +13412,18 @@
     "--call-home-icn": [
       "cephadm bootstrap"
     ],
+    "--cancel": [
+      "ceph fs quiesce"
+    ],
     "--caps": [
       "ceph-authtool"
+    ],
+    "--casesensitive": [
+      "ceph fs subvolume create",
+      "ceph fs subvolumegroup create"
+    ],
+    "--category": [
+      "ceph orch hardware status"
     ],
     "--ceph-call-home-contact-last-name": [
       "cephadm bootstrap"
@@ -13382,17 +13431,35 @@
     "--ceph-call-home-contact-phone": [
       "cephadm bootstrap"
     ],
+    "--ceph_version": [
+      "ceph orch upgrade start"
+    ],
     "--cephadm": [
       "cephadm write-custom-logrotate-config"
     ],
     "--cephadm-version": [
       "cephadm prepare-host-sudo-hardening"
     ],
+    "--cert": [
+      "ceph orch certmgr",
+      "ceph orch certmgr cert",
+      "ceph orch certmgr cert set",
+      "ceph orch certmgr cert-key"
+    ],
+    "--cert_name": [
+      "ceph orch certmgr cert-key"
+    ],
     "--check": [
       "crushtool"
     ],
     "--clean-temps": [
       "osdmaptool"
+    ],
+    "--clear": [
+      "ceph orch device replace"
+    ],
+    "--clear-alerts": [
+      "ceph nvmeof host list"
     ],
     "--clear-temp": [
       "osdmaptool"
@@ -14413,6 +14480,14 @@
     ],
     "--cluster-network": [
       "cephadm bootstrap"
+    ],
+    "--cmount_path": [
+      "ceph nfs export create",
+      "ceph nfs export create cephfs"
+    ],
+    "--combined-rw-bw-ctrl": [
+      "ceph nfs export qos enable",
+      "ceph nfs export qos enable bandwidth_control"
     ],
     "--command": [
       "ceph-bluestore-tool",
@@ -16446,11 +16521,26 @@
       "ceph time-sync-status",
       "ceph versions"
     ],
+    "--continue-on-error": [
+      "ceph orch apply"
+    ],
     "--create-from-conf": [
       "osdmaptool"
     ],
+    "--create-image": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add"
+    ],
     "--create-keyring": [
       "ceph-authtool"
+    ],
+    "--crush_bucket_name": [
+      "ceph orch upgrade start"
+    ],
+    "--crush_bucket_type": [
+      "ceph orch upgrade start"
     ],
     "--custom-prometheus-alerts": [
       "cephadm bootstrap"
@@ -17465,6 +17555,15 @@
       "ceph time-sync-status",
       "ceph versions"
     ],
+    "--daemon_id": [
+      "ceph orch ps"
+    ],
+    "--daemon_type": [
+      "ceph orch ps"
+    ],
+    "--daemon_types": [
+      "ceph orch upgrade start"
+    ],
     "--dashboard-crt": [
       "cephadm bootstrap"
     ],
@@ -17496,11 +17595,19 @@
     "--deep": [
       "ceph-bluestore-tool"
     ],
+    "--definitely-dead": [
+      "ceph osd down"
+    ],
     "--deploy-cephadm-agent": [
       "cephadm bootstrap"
     ],
     "--descendants": [
       "rbd children"
+    ],
+    "--descending": [
+      "ceph nvmeof top",
+      "ceph nvmeof top cpu",
+      "ceph nvmeof top io"
     ],
     "--dest": [
       "rbd clone",
@@ -17522,6 +17629,13 @@
       "rbd import",
       "rbd rename"
     ],
+    "--detail": [
+      "ceph orch host ls",
+      "ceph orch status"
+    ],
+    "--detailed": [
+      "ceph nfs export ls"
+    ],
     "--dev": [
       "ceph-bluestore-tool",
       "cephadm add-repo"
@@ -17538,10 +17652,30 @@
     "--devs-source": [
       "ceph-bluestore-tool"
     ],
+    "--dhchap_key": [
+      "ceph nvmeof subsystem",
+      "ceph nvmeof subsystem add"
+    ],
+    "--disable-auto-resize": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add"
+    ],
     "--docker": [
       "cephadm"
     ],
     "--dry-run": [
+      "ceph orch apply",
+      "ceph orch apply iscsi",
+      "ceph orch apply mds",
+      "ceph orch apply mgmt-gateway",
+      "ceph orch apply nfs",
+      "ceph orch apply oauth2-proxy",
+      "ceph orch apply osd",
+      "ceph orch apply rgw",
+      "ceph orch apply smb",
+      "ceph orch apply snmp-gateway",
       "ceph-objectstore-tool",
       "cephadm cluster-shutdown",
       "cephadm cluster-start",
@@ -17554,12 +17688,35 @@
       "crushtool",
       "osdmaptool"
     ],
+    "--enable-auth": [
+      "ceph orch apply mgmt-gateway"
+    ],
+    "--enable-nfsv3": [
+      "ceph nfs cluster create"
+    ],
+    "--enable-rdma": [
+      "ceph nfs cluster create"
+    ],
     "--enable-unsafe-tunables": [
       "crushtool"
+    ],
+    "--enable-virtual-server": [
+      "ceph nfs cluster create"
+    ],
+    "--enabled": [
+      "ceph dashboard ac-user-create",
+      "ceph nvmeof gateway set_io_stats_mode",
+      "ceph nvmeof gw set_io_stats_mode"
     ],
     "--encryption-format": [
       "rbd flatten",
       "rbd resize"
+    ],
+    "--encryption_algorithm": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add"
     ],
     "--epoch": [
       "ceph-objectstore-tool"
@@ -17567,9 +17724,15 @@
     "--exact": [
       "rbd disk-usage"
     ],
+    "--exclude": [
+      "ceph fs quiesce"
+    ],
     "--expect-hostname": [
       "cephadm check-host",
       "cephadm prepare-host"
+    ],
+    "--export": [
+      "ceph orch ls"
     ],
     "--export-crush": [
       "osdmaptool"
@@ -17588,6 +17751,45 @@
       "ceph-objectstore-tool"
     ],
     "--force": [
+      "ceph config set",
+      "ceph device light",
+      "ceph fs new",
+      "ceph fs subvolume metadata rm",
+      "ceph fs subvolume rm",
+      "ceph fs subvolume snapshot rm",
+      "ceph fs subvolumegroup rm",
+      "ceph fs subvolumegroup snapshot rm",
+      "ceph mgr module enable",
+      "ceph nvmeof listener del",
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof namespace add_host",
+      "ceph nvmeof namespace change_visibility",
+      "ceph nvmeof namespace set_qos",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add",
+      "ceph nvmeof ns add_host",
+      "ceph nvmeof ns change_visibility",
+      "ceph nvmeof ns set_qos",
+      "ceph orch certmgr",
+      "ceph orch certmgr cert",
+      "ceph orch certmgr cert set",
+      "ceph orch certmgr cert-key",
+      "ceph orch daemon",
+      "ceph orch daemon rm",
+      "ceph orch device zap",
+      "ceph orch hardware shutdown",
+      "ceph orch host drain",
+      "ceph orch host label rm",
+      "ceph orch host maintenance",
+      "ceph orch host maintenance enter",
+      "ceph orch host maintenance exit",
+      "ceph orch host rm",
+      "ceph orch osd rm",
+      "ceph orch rm",
+      "ceph osd destroy",
+      "ceph osd erasure-code-profile set",
+      "ceph osd purge",
       "ceph-objectstore-tool",
       "cephadm rm-cluster",
       "cephadm rm-daemon",
@@ -17596,10 +17798,50 @@
     "--force-delete-data": [
       "cephadm rm-daemon"
     ],
+    "--force-nonempty": [
+      "ceph osd tier",
+      "ceph osd tier add"
+    ],
+    "--force-password": [
+      "ceph dashboard ac-user-set-password"
+    ],
     "--force-start": [
       "cephadm adopt"
     ],
     "--format": [
+      "ceph crash ls",
+      "ceph crash ls-new",
+      "ceph fs snap-schedule list",
+      "ceph fs snap-schedule status",
+      "ceph fs status",
+      "ceph nfs cluster get-export-default",
+      "ceph nfs cluster info",
+      "ceph nfs cluster ls",
+      "ceph nfs cluster qos get",
+      "ceph nfs cluster set-export-default",
+      "ceph nfs export",
+      "ceph nfs export apply",
+      "ceph nfs export create",
+      "ceph nfs export create cephfs",
+      "ceph nfs export create rgw",
+      "ceph nfs export get",
+      "ceph nfs export info",
+      "ceph nfs export ls",
+      "ceph nfs export qos get",
+      "ceph nfs export update",
+      "ceph orch upgrade status",
+      "ceph osd pool autoscale-status",
+      "ceph osd status",
+      "ceph smb cluster",
+      "ceph smb cluster create",
+      "ceph smb cluster ls",
+      "ceph smb cluster rm",
+      "ceph smb share",
+      "ceph smb share create",
+      "ceph smb share ls",
+      "ceph smb share rm",
+      "ceph smb share update",
+      "ceph smb show",
       "rbd children",
       "rbd diff",
       "rbd disk-usage",
@@ -17611,6 +17853,9 @@
       "rbd diff",
       "rbd disk-usage",
       "rbd export-diff"
+    ],
+    "--fs": [
+      "ceph fs snap-schedule list"
     ],
     "--fsid": [
       "ceph-objectstore-tool",
@@ -17645,6 +17890,33 @@
     ],
     "--gpg-url": [
       "cephadm add-repo"
+    ],
+    "--group": [
+      "ceph fs snap-schedule list",
+      "ceph orch apply nvmeof"
+    ],
+    "--group_name": [
+      "ceph fs quiesce"
+    ],
+    "--gw_group": [
+      "ceph nvmeof gateway set_io_stats_mode",
+      "ceph nvmeof gw set_io_stats_mode",
+      "ceph nvmeof host list",
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof namespace add_host",
+      "ceph nvmeof namespace change_visibility",
+      "ceph nvmeof namespace set_auto_resize",
+      "ceph nvmeof namespace set_qos",
+      "ceph nvmeof namespace update",
+      "ceph nvmeof ns add_host",
+      "ceph nvmeof ns change_visibility",
+      "ceph nvmeof ns set_auto_resize",
+      "ceph nvmeof ns set_qos",
+      "ceph nvmeof ns update",
+      "ceph nvmeof spdk_log_level get",
+      "ceph nvmeof subsystem",
+      "ceph nvmeof subsystem add"
     ],
     "--head": [
       "ceph-objectstore-tool"
@@ -18662,6 +18934,22 @@
       "ceph-objectstore-tool",
       "ceph-volume"
     ],
+    "--host_pattern": [
+      "ceph orch host ls"
+    ],
+    "--host_status": [
+      "ceph orch host ls"
+    ],
+    "--hostname": [
+      "ceph orch certmgr cert-key",
+      "ceph orch certmgr key"
+    ],
+    "--hosts": [
+      "ceph orch upgrade start"
+    ],
+    "--human-readable": [
+      "ceph fs volume info"
+    ],
     "--id": [
       "ceph",
       "ceph a",
@@ -19670,6 +19958,9 @@
       "ceph versions",
       "rbd"
     ],
+    "--if_version": [
+      "ceph fs quiesce"
+    ],
     "--image": [
       "cephadm",
       "rbd bench",
@@ -19717,6 +20008,12 @@
     "--import-keyring": [
       "ceph-authtool"
     ],
+    "--include": [
+      "ceph fs quiesce"
+    ],
+    "--ingress": [
+      "ceph nfs cluster create"
+    ],
     "--initial-dashboard-password": [
       "cephadm bootstrap"
     ],
@@ -19762,10 +20059,15 @@
     "--json": [
       "cephadm display-license"
     ],
+    "--keep-conf-keyring": [
+      "ceph orch host drain"
+    ],
     "--keep-logs": [
       "cephadm rm-cluster"
     ],
     "--key": [
+      "ceph orch certmgr cert-key",
+      "ceph orch certmgr key",
       "ceph-bluestore-tool",
       "cephadm deploy"
     ],
@@ -19775,6 +20077,13 @@
     "--keyring": [
       "cephadm deploy",
       "rbd"
+    ],
+    "--kmip_key_id": [
+      "ceph nfs export create",
+      "ceph nfs export create cephfs"
+    ],
+    "--leader": [
+      "ceph fs quiesce"
     ],
     "--legacy-dir": [
       "cephadm adopt",
@@ -19792,6 +20101,18 @@
     ],
     "--list": [
       "ceph-authtool"
+    ],
+    "--load_balancing_group": [
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add"
+    ],
+    "--location": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof namespace update",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add",
+      "ceph nvmeof ns update"
     ],
     "--lock-cookie": [
       "rados"
@@ -19838,6 +20159,10 @@
     "--long": [
       "rbd list"
     ],
+    "--maintenance": [
+      "ceph orch host",
+      "ceph orch host add"
+    ],
     "--mark-in": [
       "osdmaptool"
     ],
@@ -19849,6 +20174,26 @@
     ],
     "--mark-up-in": [
       "osdmaptool"
+    ],
+    "--max_client_combined_bw": [
+      "ceph nfs export qos enable",
+      "ceph nfs export qos enable bandwidth_control"
+    ],
+    "--max_client_read_bw": [
+      "ceph nfs export qos enable",
+      "ceph nfs export qos enable bandwidth_control"
+    ],
+    "--max_client_write_bw": [
+      "ceph nfs export qos enable",
+      "ceph nfs export qos enable bandwidth_control"
+    ],
+    "--max_export_combined_bw": [
+      "ceph nfs export qos enable",
+      "ceph nfs export qos enable bandwidth_control"
+    ],
+    "--max_export_read_bw": [
+      "ceph nfs export qos enable",
+      "ceph nfs export qos enable bandwidth_control"
     ],
     "--memory-limit": [
       "cephadm deploy"
@@ -19874,6 +20219,9 @@
       "rbd create",
       "rbd import"
     ],
+    "--mock": [
+      "ceph callhome reset"
+    ],
     "--mode": [
       "ceph-authtool"
     ],
@@ -19891,6 +20239,12 @@
     ],
     "--mon_host": [
       "rbd"
+    ],
+    "--monitoring_addrs": [
+      "ceph nfs cluster create"
+    ],
+    "--monitoring_port": [
+      "ceph nfs cluster create"
     ],
     "--mountpoint": [
       "ceph-objectstore-tool"
@@ -20926,6 +21280,18 @@
       "rbd status",
       "rbd watch"
     ],
+    "--namespace-isolated": [
+      "ceph fs subvolume create"
+    ],
+    "--no-auto-visible": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add"
+    ],
+    "--no-ceph-conf": [
+      "ceph orch client-keyring set"
+    ],
     "--no-cgroups-split": [
       "cephadm",
       "cephadm adopt"
@@ -20936,8 +21302,20 @@
     "--no-container-init": [
       "cephadm"
     ],
+    "--no-destroy": [
+      "ceph orch osd rm"
+    ],
     "--no-detail": [
       "cephadm ls"
+    ],
+    "--no-group-append": [
+      "ceph nvmeof subsystem",
+      "ceph nvmeof subsystem add"
+    ],
+    "--no-header": [
+      "ceph nvmeof top",
+      "ceph nvmeof top cpu",
+      "ceph nvmeof top io"
     ],
     "--no-hosts": [
       "cephadm shell"
@@ -20947,6 +21325,23 @@
     ],
     "--no-mon-config": [
       "ceph-objectstore-tool"
+    ],
+    "--no-osd-flags": [
+      "ceph orch upgrade start"
+    ],
+    "--no-overwrite": [
+      "ceph orch apply",
+      "ceph orch apply iscsi",
+      "ceph orch apply mds",
+      "ceph orch apply mgmt-gateway",
+      "ceph orch apply nfs",
+      "ceph orch apply nvmeof",
+      "ceph orch apply oauth2-proxy",
+      "ceph orch apply osd",
+      "ceph orch apply rgw",
+      "ceph orch apply smb",
+      "ceph orch apply snmp-gateway",
+      "ceph orch tuned-profile"
     ],
     "--no-progress": [
       "rbd copy",
@@ -20961,6 +21356,10 @@
       "rbd resize",
       "rbd sparsify"
     ],
+    "--no-shrink": [
+      "ceph fs subvolume resize",
+      "ceph fs subvolumegroup resize"
+    ],
     "--no-superblock": [
       "ceph-objectstore-tool"
     ],
@@ -20969,6 +21368,10 @@
       "rbd copy",
       "rbd create",
       "rbd import"
+    ],
+    "--offline": [
+      "ceph orch host maintenance exit",
+      "ceph orch host rm"
     ],
     "--offset": [
       "ceph-bluestore-tool"
@@ -22034,7 +22437,11 @@
     "--pgp-bits": [
       "osdmaptool"
     ],
+    "--placement": [
+      "ceph orch apply nvmeof"
+    ],
     "--pool": [
+      "ceph orch apply nvmeof",
       "ceph-objectstore-tool",
       "rbd bench",
       "rbd children",
@@ -22056,6 +22463,13 @@
       "rbd status",
       "rbd watch"
     ],
+    "--port": [
+      "ceph nfs cluster create",
+      "ceph nvmeof subsystem",
+      "ceph nvmeof subsystem add",
+      "ceph orch apply rgw",
+      "ceph orch daemon add rgw"
+    ],
     "--port-ips": [
       "cephadm deploy"
     ],
@@ -22067,23 +22481,80 @@
       "rbd list",
       "rbd status"
     ],
+    "--print-header": [
+      "ceph iostat"
+    ],
     "--print-key": [
       "ceph-authtool"
+    ],
+    "--pwd-update-required": [
+      "ceph dashboard ac-user-create"
+    ],
+    "--pwd_expiration_date": [
+      "ceph dashboard ac-user-create"
+    ],
+    "--query": [
+      "ceph fs quiesce"
+    ],
+    "--rados_namespace": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add"
+    ],
+    "--raise-automation-warning": [
+      "ceph orch enable-call-home"
+    ],
+    "--rbd_image_size": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add"
+    ],
+    "--rdma_port": [
+      "ceph nfs cluster create"
     ],
     "--read": [
       "osdmaptool"
     ],
+    "--read-only": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add"
+    ],
     "--read-pool": [
       "osdmaptool"
     ],
+    "--readonly": [
+      "ceph nfs export create",
+      "ceph nfs export create cephfs",
+      "ceph nfs export create rgw"
+    ],
+    "--realm": [
+      "ceph orch apply rgw"
+    ],
     "--rebuild-class-roots": [
       "crushtool"
+    ],
+    "--rebuild-osds-sharing-devices": [
+      "ceph orch osd rebuild"
     ],
     "--reclassify": [
       "crushtool"
     ],
     "--reconfig": [
       "cephadm deploy"
+    ],
+    "--recover": [
+      "ceph fs new"
+    ],
+    "--recursive": [
+      "ceph fs snap-schedule list"
+    ],
+    "--refresh": [
+      "ceph orch ls",
+      "ceph orch ps"
     ],
     "--registry-json": [
       "cephadm bootstrap",
@@ -22102,6 +22573,7 @@
       "cephadm registry-login"
     ],
     "--release": [
+      "ceph fs quiesce",
       "cephadm add-repo"
     ],
     "--remove-item": [
@@ -22110,17 +22582,29 @@
     "--remove-rule": [
       "crushtool"
     ],
+    "--replace": [
+      "ceph orch osd rm"
+    ],
     "--repo-url": [
       "cephadm add-repo"
     ],
+    "--reset": [
+      "ceph fs quiesce"
+    ],
     "--resharding-ctrl": [
       "ceph-bluestore-tool"
+    ],
+    "--retain-snapshots": [
+      "ceph fs subvolume rm"
     ],
     "--retry": [
       "cephadm"
     ],
     "--reweight": [
       "crushtool"
+    ],
+    "--rm-crush-entry": [
+      "ceph orch host rm"
     ],
     "--rmtype": [
       "ceph-objectstore-tool"
@@ -22131,11 +22615,51 @@
     "--save": [
       "osdmaptool"
     ],
+    "--secure": [
+      "ceph nvmeof listener",
+      "ceph nvmeof listener add"
+    ],
+    "--secure-listeners": [
+      "ceph nvmeof subsystem",
+      "ceph nvmeof subsystem add"
+    ],
     "--send-signal-to-daemon": [
       "cephadm deploy"
     ],
+    "--server_address": [
+      "ceph nvmeof gateway set_io_stats_mode",
+      "ceph nvmeof gw set_io_stats_mode",
+      "ceph nvmeof host list",
+      "ceph nvmeof listener del",
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof namespace change_visibility",
+      "ceph nvmeof namespace set_qos",
+      "ceph nvmeof namespace update",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add",
+      "ceph nvmeof ns update",
+      "ceph nvmeof spdk_log_level get",
+      "ceph nvmeof subsystem",
+      "ceph nvmeof subsystem add"
+    ],
     "--service-name": [
       "cephadm update-osd-service"
+    ],
+    "--service_name": [
+      "ceph orch certmgr",
+      "ceph orch certmgr cert",
+      "ceph orch certmgr cert set",
+      "ceph orch certmgr key",
+      "ceph orch ps"
+    ],
+    "--services": [
+      "ceph orch upgrade start"
+    ],
+    "--session_id": [
+      "ceph nvmeof top",
+      "ceph nvmeof top cpu",
+      "ceph nvmeof top io"
     ],
     "--set-choose-local-fallback-tries": [
       "crushtool"
@@ -22154,6 +22678,9 @@
     ],
     "--set-chooseleaf-vary-r": [
       "crushtool"
+    ],
+    "--set_id": [
+      "ceph fs quiesce"
     ],
     "--setgroup": [
       "ceph",
@@ -24177,6 +24704,9 @@
       "cephadm ceph-volume",
       "cephadm shell"
     ],
+    "--show-all-versions": [
+      "ceph orch upgrade ls"
+    ],
     "--show-bad-mappings": [
       "crushtool"
     ],
@@ -24188,6 +24718,9 @@
     ],
     "--show-mappings": [
       "crushtool"
+    ],
+    "--show-shadow": [
+      "ceph osd crush tree"
     ],
     "--show-statistics": [
       "crushtool"
@@ -24205,6 +24738,8 @@
       "cephadm bootstrap"
     ],
     "--size": [
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add",
       "rbd create",
       "rbd resize"
     ],
@@ -24231,8 +24766,25 @@
     "--skip-mount-omap": [
       "ceph-objectstore-tool"
     ],
+    "--skip-notify-nfs-server": [
+      "ceph nfs export",
+      "ceph nfs export apply",
+      "ceph nfs export create rgw",
+      "ceph nfs export delete",
+      "ceph nfs export qos",
+      "ceph nfs export qos disable",
+      "ceph nfs export qos disable bandwidth_control",
+      "ceph nfs export qos disable ops_control",
+      "ceph nfs export qos enable",
+      "ceph nfs export qos enable bandwidth_control",
+      "ceph nfs export qos enable ops_control",
+      "ceph nfs export rm"
+    ],
     "--skip-ping-check": [
       "cephadm bootstrap"
+    ],
+    "--skip-pre-steps": [
+      "ceph cephadm set-user"
     ],
     "--skip-prepare-host": [
       "cephadm bootstrap"
@@ -24241,11 +24793,18 @@
       "cephadm adopt",
       "cephadm bootstrap"
     ],
+    "--skip-realm-components": [
+      "ceph rgw realm",
+      "ceph rgw realm bootstrap"
+    ],
     "--skip-restart-for-reconfig": [
       "cephadm deploy"
     ],
     "--skip-ssh": [
       "cephadm bootstrap"
+    ],
+    "--skip-validation": [
+      "ceph orch daemon add osd"
     ],
     "--slow-omap-threshold": [
       "ceph-objectstore-tool"
@@ -24273,6 +24832,11 @@
       "rbd import-diff",
       "rbd sparsify"
     ],
+    "--squash": [
+      "ceph nfs export create",
+      "ceph nfs export create cephfs",
+      "ceph nfs export create rgw"
+    ],
     "--ssh-config": [
       "cephadm bootstrap"
     ],
@@ -24294,8 +24858,18 @@
       "cephadm prepare-host-sudo-hardening",
       "cephadm setup-ssh-user"
     ],
+    "--ssl": [
+      "ceph orch apply mgmt-gateway",
+      "ceph orch apply rgw",
+      "ceph orch daemon add rgw"
+    ],
     "--ssl-dashboard-port": [
       "cephadm bootstrap"
+    ],
+    "--start-radosgw": [
+      "ceph rgw realm",
+      "ceph rgw realm bootstrap",
+      "ceph rgw zone"
     ],
     "--status": [
       "ceph",
@@ -25304,6 +25878,9 @@
       "ceph time-sync-status",
       "ceph versions"
     ],
+    "--sticky": [
+      "ceph health mute"
+    ],
     "--storage-insights-config": [
       "cephadm bootstrap"
     ],
@@ -25322,8 +25899,19 @@
     "--style": [
       "cephadm adopt"
     ],
+    "--subvol": [
+      "ceph fs snap-schedule list"
+    ],
+    "--summary": [
+      "ceph nvmeof top io",
+      "ceph orch device",
+      "ceph orch device ls"
+    ],
     "--sysctl-dir": [
       "cephadm"
+    ],
+    "--tags": [
+      "ceph orch upgrade ls"
     ],
     "--target-data-path": [
       "ceph-objectstore-tool"
@@ -25363,7 +25951,34 @@
       "rbd create"
     ],
     "--timeout": [
+      "ceph fs quiesce",
       "cephadm"
+    ],
+    "--traddr": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof namespace add_host",
+      "ceph nvmeof namespace change_visibility",
+      "ceph nvmeof namespace set_auto_resize",
+      "ceph nvmeof namespace set_qos",
+      "ceph nvmeof namespace update",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add",
+      "ceph nvmeof ns add_host",
+      "ceph nvmeof ns change_visibility",
+      "ceph nvmeof ns set_auto_resize",
+      "ceph nvmeof ns set_qos",
+      "ceph nvmeof ns update",
+      "ceph nvmeof subsystem",
+      "ceph nvmeof subsystem add"
+    ],
+    "--trash-image": [
+      "ceph nvmeof namespace",
+      "ceph nvmeof namespace add",
+      "ceph nvmeof namespace update",
+      "ceph nvmeof ns",
+      "ceph nvmeof ns add",
+      "ceph nvmeof ns update"
     ],
     "--tree": [
       "crushtool",
@@ -25377,6 +25992,21 @@
     ],
     "--unit-dir": [
       "cephadm"
+    ],
+    "--unmanaged": [
+      "ceph orch apply",
+      "ceph orch apply mds",
+      "ceph orch apply mgmt-gateway",
+      "ceph orch apply nfs",
+      "ceph orch apply nvmeof",
+      "ceph orch apply oauth2-proxy",
+      "ceph orch apply osd",
+      "ceph orch apply rgw",
+      "ceph orch apply smb",
+      "ceph orch apply snmp-gateway"
+    ],
+    "--update": [
+      "ceph rgw realm reconcile"
     ],
     "--upmap": [
       "osdmaptool"
@@ -26402,6 +27032,10 @@
       "cephadm",
       "cephadm version"
     ],
+    "--verify-host-name": [
+      "ceph nvmeof listener",
+      "ceph nvmeof listener add"
+    ],
     "--version": [
       "ceph",
       "ceph a",
@@ -27409,6 +28043,10 @@
       "ceph time-sync-status",
       "ceph versions",
       "cephadm add-repo"
+    ],
+    "--virtual_ip": [
+      "ceph nfs cluster create",
+      "ceph orch apply mgmt-gateway"
     ],
     "--vstart": [
       "osdmaptool"
@@ -33459,23 +34097,97 @@
       "rbd diff",
       "rbd export-diff"
     ],
+    "--wide": [
+      "ceph orch device",
+      "ceph orch device ls"
+    ],
     "--with-centralized-logging": [
       "cephadm bootstrap"
     ],
     "--with-default-pool": [
       "osdmaptool"
     ],
+    "--with-summary": [
+      "ceph orch host rescan"
+    ],
+    "--with-timestamp": [
+      "ceph nvmeof top",
+      "ceph nvmeof top cpu",
+      "ceph nvmeof top io"
+    ],
+    "--with-value": [
+      "ceph mon feature",
+      "ceph mon feature ls"
+    ],
+    "--xprtsec": [
+      "ceph nfs export create",
+      "ceph nfs export create cephfs",
+      "ceph nfs export create rgw"
+    ],
     "--yes-i-know": [
       "cephadm bootstrap"
     ],
     "--yes-i-really-mean-it": [
+      "ceph fs fail",
+      "ceph fs flag",
+      "ceph fs rename",
+      "ceph fs reset",
+      "ceph fs rm",
+      "ceph fs set",
+      "ceph fs volume rename",
+      "ceph mds fail",
+      "ceph mgr module force",
+      "ceph mon disable_stretch_mode",
+      "ceph mon feature set",
+      "ceph mon set_new_tiebreaker",
+      "ceph orch device replace",
+      "ceph orch hardware powercycle",
+      "ceph orch hardware shutdown",
+      "ceph orch host maintenance",
+      "ceph orch host maintenance enter",
+      "ceph osd crush swap-bucket",
+      "ceph osd destroy",
+      "ceph osd erasure-code-profile set",
+      "ceph osd force-create-pg",
+      "ceph osd force_healthy_stretch_mode",
+      "ceph osd force_recovery_stretch_mode",
+      "ceph osd lost",
+      "ceph osd pool",
+      "ceph osd pool application",
+      "ceph osd pool application disable",
+      "ceph osd pool application enable",
+      "ceph osd pool create",
+      "ceph osd pool rename",
+      "ceph osd pool set",
+      "ceph osd pool stretch",
+      "ceph osd pool stretch set",
+      "ceph osd purge",
+      "ceph osd purge-new",
+      "ceph osd set",
+      "ceph osd set-allow-crimson",
+      "ceph osd set-require-min-compat-client",
       "cephadm cluster-shutdown"
     ],
     "--yes-i-really-really-mean-it": [
+      "ceph fs new",
+      "ceph fs set",
+      "ceph osd pool rm",
       "ceph-bluestore-tool"
+    ],
+    "--zap": [
+      "ceph orch osd rm"
+    ],
+    "--zap-osd-devices": [
+      "ceph orch host drain"
     ],
     "--zap-osds": [
       "cephadm rm-cluster"
+    ],
+    "--zone": [
+      "ceph orch apply rgw"
+    ],
+    "--zonegroup": [
+      "ceph orch apply rgw"
     ],
     "-C": [
       "ceph-authtool"

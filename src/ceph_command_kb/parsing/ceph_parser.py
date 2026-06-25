@@ -49,7 +49,7 @@ class CephParser(BaseParser):
 
         result.usage = self._extract_usage(raw_help)
         result.description = self._extract_description(raw_help, command_parts)
-        result.flags = self._extract_flags(raw_help)
+        result.flags = self._extract_flags(raw_help, command_parts)
         result.subcommand_names = self._extract_subcommands(raw_help, command_parts)
         result.arguments = self._extract_arguments(raw_help, command_parts)
 
@@ -101,7 +101,7 @@ class CephParser(BaseParser):
 
         return ""
 
-    def _extract_flags(self, text: str) -> list[Flag]:
+    def _extract_flags(self, text: str, command_parts: list[str] | None = None) -> list[Flag]:
         flags: list[Flag] = []
         seen = set()
 
@@ -139,7 +139,65 @@ class CephParser(BaseParser):
                         description=desc,
                     ))
 
+        self._extract_syntax_flags(text, command_parts, flags, seen)
+
         return flags
+
+    def _extract_syntax_flags(
+        self,
+        text: str,
+        command_parts: list[str] | None,
+        flags: list[Flag],
+        seen: set,
+    ) -> None:
+        """Extract flags from command syntax lines in the Monitor commands section.
+
+        Ceph help embeds flags in the command listing:
+            nfs cluster create <id> [--ingress] [--enable-rdma] [--rdma_port <int>]
+        """
+        if not command_parts or len(command_parts) < 2:
+            return
+
+        subcommand = " ".join(command_parts[1:])
+        in_monitor = False
+        syntax_lines: list[str] = []
+        capturing = False
+
+        for line in text.split("\n"):
+            if "Monitor commands" in line:
+                in_monitor = True
+                continue
+            if not in_monitor:
+                continue
+
+            stripped = line.strip()
+
+            if stripped.startswith(subcommand) and not capturing:
+                syntax_lines.append(stripped)
+                capturing = True
+            elif capturing:
+                if stripped and (stripped.startswith("[") or stripped.startswith("mode") or stripped.startswith("--")):
+                    syntax_lines.append(stripped)
+                elif line.startswith(" ") and stripped and not stripped[0].isupper():
+                    syntax_lines.append(stripped)
+                else:
+                    break
+
+        full_syntax = " ".join(syntax_lines)
+        full_syntax = re.sub(r"-\s+", "-", full_syntax)
+        full_syntax = re.sub(r"\s{2,}", " ", full_syntax)
+
+        for match in re.finditer(r"\[--([\w-]+)(?:\s+<([\w-]+)(?::[\w|]+)?>)?\]", full_syntax):
+            flag_name = f"--{match.group(1)}"
+            value_name = match.group(2)
+            key = (None, flag_name)
+            if key not in seen:
+                seen.add(key)
+                flags.append(Flag(
+                    long_form=flag_name,
+                    takes_value=value_name is not None,
+                    value_name=f"<{value_name}>" if value_name else None,
+                ))
 
     def _extract_subcommands(
         self, text: str, command_parts: list[str] | None
