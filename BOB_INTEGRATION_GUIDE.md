@@ -58,7 +58,7 @@ python -m ceph_command_kb.server.rest_api
 python -m ceph_command_kb.server.rest_api --host 0.0.0.0 --port 9090
 
 # Or specify a different Ceph version
-python -m ceph_command_kb.server.rest_api --kb-path knowledge/ceph-19.2.0-squid
+python -m ceph_command_kb.server.rest_api --kb-path knowledge/ceph-20.2.1-tentacle
 ```
 
 The server will start and be available at `http://localhost:9090`
@@ -72,10 +72,9 @@ curl http://localhost:9090/health
 Expected response:
 ```json
 {
-  "status": "healthy",
+  "status": "ok",
   "kb_loaded": true,
-  "commands_count": 1254,
-  "configs_count": 2660
+  "total_commands": 1254
 }
 ```
 
@@ -135,15 +134,15 @@ class CephCommandKB:
 kb = CephCommandKB()
 
 # Verify a command before generating code
-result = kb.verify_command("ceph osd pool create mypool 32")
-if result["valid"]:
+result = kb.verify_command("ceph osd pool create")
+if result["status"] == "VERIFIED":
     print("Command is valid!")
 else:
-    print(f"Issues: {result['issues']}")
+    print(f"Status: {result['status']}, Reason: {result.get('reason')}")
 
 # Search for commands
 results = kb.search_commands("nfs cluster create")
-print(f"Found {len(results['commands'])} matching commands")
+print(f"Found {results['total_results']} matching commands")
 
 # Review a test script
 script = """
@@ -151,7 +150,7 @@ ceph osd pool create mypool 32
 rbd create img --size 1024
 """
 review = kb.review_test(script)
-print(f"Review: {review}")
+print(f"Verified: {review['verified_commands']}/{review['total_commands']}")
 ```
 
 ### Option B: LangChain Tool Integration
@@ -309,15 +308,11 @@ curl -X POST http://localhost:9090/api/verify_command \
 Response:
 ```json
 {
-  "valid": true,
   "command": "ceph osd pool create",
-  "flags_valid": true,
-  "arguments_valid": true,
-  "metadata": {
-    "description": "Create a new pool",
-    "flags": [...],
-    "arguments": [...]
-  }
+  "command_verified": true,
+  "status": "VERIFIED",
+  "usage": "ceph osd pool create <pool> ...",
+  "description": "create pool"
 }
 ```
 
@@ -340,13 +335,15 @@ curl -X POST http://localhost:9090/api/verify_config \
 Response:
 ```json
 {
-  "found": true,
-  "name": "osd_pool_default_size",
+  "config": "osd_pool_default_size",
+  "verified": true,
+  "status": "VERIFIED",
   "type": "uint",
   "default": "3",
-  "description": "Default number of replicas for pools",
+  "desc": "the number of copies of an object for new replicated pools",
   "min": "0",
-  "max": "10"
+  "max": "10",
+  "can_update_at_runtime": true
 }
 ```
 

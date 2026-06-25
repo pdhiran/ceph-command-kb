@@ -95,7 +95,7 @@ curl -X POST http://localhost:9090/api/review_test \
 curl http://localhost:9090/health
 ```
 
-**📘 For detailed Bob integration guide and Python examples, see:**
+**For detailed Bob integration guide and Python examples, see:**
 - [BOB_INTEGRATION_GUIDE.md](BOB_INTEGRATION_GUIDE.md) — Complete integration guide with deployment options
 - [examples/bob_agent_integration.py](examples/bob_agent_integration.py) — Ready-to-use Python client and LangChain/CrewAI tools
 

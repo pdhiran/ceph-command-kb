@@ -20,8 +20,8 @@ class CephCommandKBClient:
     
     Example:
         >>> kb = CephCommandKBClient("http://localhost:9090")
-        >>> result = kb.verify_command("ceph osd pool create mypool 32")
-        >>> if result["valid"]:
+        >>> result = kb.verify_command("ceph osd pool create")
+        >>> if result["status"] == "VERIFIED":
         ...     print("Command is valid!")
     """
     
@@ -64,15 +64,15 @@ class CephCommandKBClient:
         
         Returns:
             Dictionary with verification results including:
-            - valid: bool indicating if command is valid
-            - issues: list of any problems found
-            - metadata: command metadata if found
+            - status: "VERIFIED", "NOT_VERIFIED", or "PARTIALLY_VERIFIED"
+            - command_verified: bool indicating if command exists
+            - flags_verified: dict of flag verification results (if flags provided)
+            - arguments_verified: dict of argument verification results (if arguments provided)
         
         Example:
             >>> result = kb.verify_command(
             ...     "ceph osd pool create",
             ...     flags=["--size"],
-            ...     arguments=["pool_name", "pg_num"]
             ... )
         """
         payload = {"command": command}
@@ -102,7 +102,7 @@ class CephCommandKBClient:
         
         Example:
             >>> results = kb.search_commands("rbd mirror")
-            >>> for cmd in results["commands"]:
+            >>> for cmd in results["results"]:
             ...     print(cmd["name"])
         """
         response = requests.post(
@@ -147,7 +147,8 @@ class CephCommandKBClient:
         
         Example:
             >>> config = kb.verify_config("osd_pool_default_size")
-            >>> print(f"Default: {config['default']}, Type: {config['type']}")
+            >>> if config["status"] == "VERIFIED":
+            ...     print(f"Default: {config['default']}, Type: {config['type']}")
         """
         response = requests.post(
             f"{self.base_url}/api/verify_config",
@@ -199,8 +200,8 @@ class CephCommandKBClient:
             ... rbd create img --size 1024
             ... '''
             >>> review = kb.review_test(script)
-            >>> for issue in review["issues"]:
-            ...     print(f"{issue['severity']}: {issue['message']}")
+            >>> for finding in review["findings"]:
+            ...     print(f"{finding['severity']}: {finding['message']}")
         """
         response = requests.post(
             f"{self.base_url}/api/review_test",
@@ -478,19 +479,19 @@ def bob_agent_example():
     # Step 1: Search for commands
     print("Step 1: Searching for NFS cluster commands...")
     search_results = kb.search_commands("nfs cluster create")
-    print(f"Found {len(search_results.get('commands', []))} commands")
+    print(f"Found {search_results.get('total_results', 0)} commands")
     
     # Step 2: Verify specific command
     print("\nStep 2: Verifying command syntax...")
     command = "ceph nfs cluster create"
     verify_result = kb.verify_command(command)
     
-    if verify_result.get("valid"):
-        print(f"✓ Command '{command}' is valid")
+    if verify_result.get("status") == "VERIFIED":
+        print(f"  Command '{command}' is valid")
     else:
-        print(f"✗ Command '{command}' has issues:")
-        for issue in verify_result.get("issues", []):
-            print(f"  - {issue}")
+        print(f"  Command '{command}' status: {verify_result.get('status')}")
+        if verify_result.get("similar_commands"):
+            print(f"  Similar: {verify_result['similar_commands']}")
     
     # Step 3: Generate a test script (simulated)
     test_script = """
@@ -509,20 +510,20 @@ def bob_agent_example():
     review = kb.review_test(test_script)
     
     print(f"Review complete:")
-    print(f"  - Commands found: {review.get('commands_found', 0)}")
-    print(f"  - Valid commands: {review.get('valid_commands', 0)}")
-    print(f"  - Issues: {len(review.get('issues', []))}")
+    print(f"  - Commands found: {review.get('total_commands', 0)}")
+    print(f"  - Verified: {review.get('verified_commands', 0)}")
+    print(f"  - Findings: {len(review.get('findings', []))}")
     
-    if review.get("issues"):
-        print("\nIssues found:")
-        for issue in review["issues"]:
-            print(f"  [{issue.get('severity', 'INFO')}] {issue.get('message', '')}")
+    if review.get("findings"):
+        print("\nFindings:")
+        for finding in review["findings"]:
+            print(f"  [{finding.get('severity', 'info')}] {finding.get('message', '')}")
     
     # Step 5: Check config parameter
     print("\nStep 5: Checking config parameter...")
-    config = kb.verify_config("nfs_ganesha_port")
-    if config.get("found"):
-        print(f"✓ Config 'nfs_ganesha_port' found")
+    config = kb.verify_config("osd_pool_default_size")
+    if config.get("status") == "VERIFIED":
+        print(f"  Config 'osd_pool_default_size' found")
         print(f"  Type: {config.get('type')}")
         print(f"  Default: {config.get('default')}")
     
@@ -553,5 +554,3 @@ if __name__ == "__main__":
         print(f"\nUnexpected error: {e}")
         import traceback
         traceback.print_exc()
-
-# Made with Bob
