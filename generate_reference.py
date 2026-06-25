@@ -78,6 +78,12 @@ def parse_args() -> argparse.Namespace:
         default=False,
         help="Re-parse from stored raw help (skip discovery)",
     )
+    parser.add_argument(
+        "--docs",
+        action="store_true",
+        default=False,
+        help="Also generate Markdown docs and raw help text files",
+    )
     return parser.parse_args()
 
 
@@ -133,9 +139,11 @@ def main() -> int:
     logger.info("Writing output to %s", version_dir)
 
     JsonWriter(version_dir).write(kb)
-    MarkdownWriter(version_dir).write(kb)
     SearchIndexWriter(version_dir).write(kb)
-    RawHelpWriter(version_dir).write(kb)
+
+    if args.docs:
+        MarkdownWriter(version_dir).write(kb)
+        RawHelpWriter(version_dir).write(kb)
 
     logger.info("=== Generation complete ===")
     logger.info("  Commands:  %d", kb.total_commands)
