@@ -38,39 +38,13 @@ Restart Cursor. The MCP server starts automatically.
 
 ---
 
-**Claude Desktop** — start the server, then add to `claude_desktop_config.json`:
-
-```bash
-python -m ceph_command_kb.server.mcp_server --transport sse --port 8080
-```
-
-```json
-{
-  "mcpServers": {
-    "ceph-cmd-kb": { "url": "http://localhost:8080/sse" }
-  }
-}
-```
-
----
-
-**Continue / Cline / Windsurf** — start the server and point to the SSE endpoint:
-
-```bash
-python -m ceph_command_kb.server.mcp_server --transport sse --port 8080
-```
-
-Connect to `http://localhost:8080/sse` in the tool's MCP settings.
-
----
-
-**IBM Bob** — Bob supports MCP over SSE natively. Start the server with SSE transport:
+**Claude Desktop / Continue / Cline / Windsurf / IBM Bob** — all connect via SSE:
 
 ```bash
 python -m ceph_command_kb.server.mcp_server --transport sse --host 0.0.0.0 --port 8081
 ```
 
-Add to Bob's `.bob/mcp.json`:
+Configure your agent to connect to `http://localhost:8081/sse`:
 
 ```json
 {
@@ -83,7 +57,7 @@ Add to Bob's `.bob/mcp.json`:
 }
 ```
 
-Bob gets full access to all 18 MCP tools — same verified data as Cursor.
+For Claude Desktop: add to `claude_desktop_config.json`. For Bob: add to `.bob/mcp.json`. For Continue/Cline/Windsurf: use the MCP settings UI.
 
 ---
 
@@ -170,6 +144,38 @@ Once connected, agents automatically verify Ceph commands against the KB. You ca
 ## Supported Ceph Binaries
 
 ceph, rbd, rados, cephadm, ceph-volume, ceph-authtool, ceph-bluestore-tool, ceph-objectstore-tool, crushtool, monmaptool, osdmaptool
+
+## Running All Ceph MCPs Together
+
+Three specialized MCPs work together as the Ceph Engineering Intelligence Platform:
+
+| MCP | Purpose | SSE Port | Repo |
+|-----|---------|----------|------|
+| **ceph-cmd-kb** | Commands, configs, test validation | 8081 | [ceph-command-kb](https://github.com/pdhiran/ceph-command-kb) |
+| **ceph-doc-kb** | Documentation search, code examples | 8082 | [ceph-doc-kb](https://github.com/pdhiran/ceph-document-kb) |
+| **ceph-issue-kb** | Known issues, workarounds, fixes | 8083 | [ceph-issue-kb](https://github.com/pdhiran/ceph-issue-kb) |
+
+Start all three for SSE clients (Bob, Claude Desktop, etc.):
+
+```bash
+python -m ceph_command_kb.server.mcp_server --transport sse --port 8081 &
+python -m ceph_doc_kb.server.mcp_server --transport sse --port 8082 &
+python -m ceph_issue_kb.server.mcp_server --transport sse --port 8083 &
+```
+
+Combined agent config (`.bob/mcp.json`, `claude_desktop_config.json`, etc.):
+
+```json
+{
+  "mcpServers": {
+    "ceph-cmd-kb": { "url": "http://localhost:8081/sse", "transport": "sse" },
+    "ceph-doc-kb": { "url": "http://localhost:8082/sse", "transport": "sse" },
+    "ceph-issue-kb": { "url": "http://localhost:8083/sse", "transport": "sse" }
+  }
+}
+```
+
+Agents call whichever MCP has the right tools — the LLM decides automatically.
 
 ## Further Documentation
 
