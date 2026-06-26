@@ -12,16 +12,25 @@ import sys
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
+from mcp.types import Icon
 
 logger = logging.getLogger(__name__)
+
+CEPH_ICON = Icon(
+    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4Ij48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSIyMiIgZmlsbD0iI0VGNTAzQSIvPjx0ZXh0IHg9IjI0IiB5PSIzMiIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QzwvdGV4dD48L3N2Zz4=",
+    mimeType="image/svg+xml",
+)
 
 mcp = FastMCP(
     "Ceph Command Knowledge Base",
     instructions=(
-        "Authoritative knowledge base of Ceph CLI commands. "
-        "Use this to verify commands, flags, arguments, and syntax "
-        "before generating Ceph automation or tests."
+        "Authoritative knowledge base of 1,254 Ceph CLI commands and 2,660 config parameters. "
+        "Use this MCP when you need to: verify Ceph commands before generating them, "
+        "check if flags or arguments are valid, look up config parameter defaults and constraints, "
+        "search for commands by keyword, or review test scripts for correctness. "
+        "Always verify commands against this KB before writing Ceph automation or tests."
     ),
+    icons=[CEPH_ICON],
 )
 
 _kb_data: dict | None = None
