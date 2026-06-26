@@ -6,11 +6,11 @@ This guide explains how to integrate the Ceph Command Knowledge Base MCP tool wi
 
 The Ceph Command KB provides four integration methods:
 1. **MCP Server (stdio)** - For Cursor
-2. **MCP Server (SSE)** - For Claude Desktop and similar MCP clients
-3. **REST API** - For Bob agents, LangChain, CrewAI, CI/CD pipelines, and custom integrations
+2. **MCP Server (SSE)** - For Bob, Claude Desktop, and other MCP clients
+3. **REST API** - For LangChain, CrewAI, CI/CD pipelines, and custom integrations
 4. **VS Code Extension** - For VS Code / Bob users with inline verification, search, and script review
 
-**For Bob agents:** Use the REST API for programmatic access, or install the [VS Code Extension](vscode-extension/) for interactive use in the editor.
+**For Bob agents:** Bob supports MCP over SSE natively. This is the recommended integration — Bob gets full access to all 18 MCP tools, same as Cursor. Alternatively, use the REST API or the VS Code extension.
 
 ## Architecture
 
@@ -49,7 +49,46 @@ cd ceph-command-kb
 pip install -e .
 ```
 
-### 2. Start the REST API Server
+### 2. Connect Bob via MCP (Recommended)
+
+Bob supports MCP over SSE. This gives Bob full access to all 18 tools — same as Cursor.
+
+Start the MCP server with SSE transport:
+
+```bash
+python -m ceph_command_kb.server.mcp_server --transport sse --host 0.0.0.0 --port 8081
+```
+
+Add to Bob's `.bob/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "ceph-cmd-kb": {
+      "url": "http://localhost:8081/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+Restart Bob. It will discover all 18 tools automatically.
+
+If the server runs on a shared lab machine, replace `localhost` with the hostname:
+```json
+{
+  "mcpServers": {
+    "ceph-cmd-kb": {
+      "url": "http://your-server:8081/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+### 3. Alternative: REST API
+
+If MCP/SSE is not available, Bob can use the REST API:
 
 ```bash
 # Start on default port 9090

@@ -64,7 +64,30 @@ Connect to `http://localhost:8080/sse` in the tool's MCP settings.
 
 ---
 
-**IBM watsonx / IBM Bob / LangChain / CrewAI / CI pipelines** — use the REST API:
+**IBM Bob** — Bob supports MCP over SSE natively. Start the server with SSE transport:
+
+```bash
+python -m ceph_command_kb.server.mcp_server --transport sse --host 0.0.0.0 --port 8081
+```
+
+Add to Bob's `.bob/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "ceph-cmd-kb": {
+      "url": "http://localhost:8081/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+Bob gets full access to all 18 MCP tools — same verified data as Cursor.
+
+---
+
+**LangChain / CrewAI / CI pipelines / custom scripts** — use the REST API:
 
 ```bash
 python -m ceph_command_kb.server.rest_api --host 0.0.0.0 --port 9090
