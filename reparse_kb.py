@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from ceph_command_kb import __version__
-from ceph_command_kb.models import Command, CephVersion, KnowledgeBase
+from ceph_command_kb.models import Command, CephVersion, KnowledgeBase, extract_keywords
 from ceph_command_kb.parsing.registry import ParserRegistry
 from ceph_command_kb.storage.json_writer import JsonWriter
 from ceph_command_kb.storage.markdown_writer import MarkdownWriter
@@ -113,17 +113,7 @@ def main():
 
 
 def _extract_keywords(name, desc):
-    import re
-    stop = {"a","an","the","is","are","to","of","in","for","on","with","at","by","from","and","or","not","this","that","it","its"}
-    kw = set()
-    for w in name.split():
-        kw.add(w.lower())
-        if "-" in w:
-            kw.update(w.lower().split("-"))
-    for w in re.findall(r"\w+", (desc or "").lower()):
-        if len(w) > 2 and w not in stop:
-            kw.add(w)
-    return sorted(kw)
+    return extract_keywords(name, desc or "")
 
 
 if __name__ == "__main__":

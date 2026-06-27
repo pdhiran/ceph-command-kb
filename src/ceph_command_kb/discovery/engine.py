@@ -15,7 +15,7 @@ from ceph_command_kb import __version__
 from ceph_command_kb.config import BinaryConfig, Config
 from ceph_command_kb.discovery.cache import DiscoveryCache
 from ceph_command_kb.discovery.executor import Executor
-from ceph_command_kb.models import Command, KnowledgeBase
+from ceph_command_kb.models import Command, KnowledgeBase, extract_keywords
 from ceph_command_kb.parsing.registry import ParserRegistry
 from ceph_command_kb.version import detect_binary_version, detect_ceph_version
 
@@ -368,23 +368,4 @@ class DiscoveryEngine:
 
     @staticmethod
     def _extract_keywords(command_name: str, description: str) -> list[str]:
-        """Extract searchable keywords from command name and description."""
-        keywords = set()
-
-        for part in command_name.split():
-            keywords.add(part.lower())
-            if "-" in part:
-                for segment in part.split("-"):
-                    keywords.add(segment.lower())
-
-        if description:
-            stop_words = {
-                "a", "an", "the", "is", "are", "was", "were", "be", "been",
-                "to", "of", "in", "for", "on", "with", "at", "by", "from",
-                "and", "or", "not", "this", "that", "it", "its",
-            }
-            for word in re.findall(r"\w+", description.lower()):
-                if len(word) > 2 and word not in stop_words:
-                    keywords.add(word)
-
-        return sorted(keywords)
+        return extract_keywords(command_name, description)

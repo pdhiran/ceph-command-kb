@@ -3,9 +3,30 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
+
+_STOP_WORDS = frozenset({
+    "a", "an", "the", "is", "are", "was", "were", "be", "been",
+    "to", "of", "in", "for", "on", "with", "at", "by", "from",
+    "and", "or", "not", "this", "that", "it", "its",
+})
+
+
+def extract_keywords(command_name: str, description: str) -> list[str]:
+    """Extract searchable keywords from command name and description."""
+    keywords: set[str] = set()
+    for part in command_name.split():
+        keywords.add(part.lower())
+        if "-" in part:
+            keywords.update(part.lower().split("-"))
+    if description:
+        for word in re.findall(r"\w+", description.lower()):
+            if len(word) > 2 and word not in _STOP_WORDS:
+                keywords.add(word)
+    return sorted(keywords)
 
 
 def make_entity_id(entity_type: str, name: str, version: str = "") -> str:
@@ -217,10 +238,6 @@ class ConfigOption:
     desc: str = ""
     long_desc: str = ""
     can_update_at_runtime: bool = False
-
-    @property
-    def entity_id(self) -> str:
-        return make_entity_id("config", self.name)
     services: list[str] = field(default_factory=list)
     min: str = ""
     max: str = ""
@@ -228,6 +245,10 @@ class ConfigOption:
     tags: list[str] = field(default_factory=list)
     flags: list[str] = field(default_factory=list)
     daemon_defaults: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def entity_id(self) -> str:
+        return make_entity_id("config", self.name)
 
     def to_dict(self) -> dict[str, Any]:
         return {

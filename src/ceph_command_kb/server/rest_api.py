@@ -23,12 +23,14 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 
 from ceph_command_kb.server.mcp_server import (
+    capabilities,
     find_binary,
     find_command,
     get_config_help,
     get_examples,
     get_help,
     get_raw_help,
+    health,
     init_kb,
     list_configs_by_section,
     list_subcommands,
@@ -51,14 +53,34 @@ def _parse_json(raw: str) -> dict:
     return json.loads(raw)
 
 
+def _error_response(status_code: int, message: str) -> JSONResponse:
+    return JSONResponse({"error": message}, status_code=status_code)
+
+
+async def _get_params(request: Request, required: list[str]) -> dict | JSONResponse:
+    """Parse JSON body and validate required keys. Returns params dict or error response."""
+    try:
+        params = await request.json()
+    except Exception:
+        return _error_response(400, "Invalid or missing JSON body")
+    missing = [k for k in required if k not in params]
+    if missing:
+        return _error_response(400, f"Missing required field(s): {', '.join(missing)}")
+    return params
+
+
 async def handle_find_command(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["command_name"])
+    if isinstance(params, JSONResponse):
+        return params
     result = find_command(command_name=params["command_name"])
     return JSONResponse(_parse_json(result))
 
 
 async def handle_verify_command(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["command"])
+    if isinstance(params, JSONResponse):
+        return params
     result = verify_command(
         command=params["command"],
         flags=params.get("flags"),
@@ -68,7 +90,9 @@ async def handle_verify_command(request: Request) -> JSONResponse:
 
 
 async def handle_search_commands(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["query"])
+    if isinstance(params, JSONResponse):
+        return params
     result = search_commands(
         query=params["query"],
         limit=params.get("limit", 20),
@@ -77,31 +101,41 @@ async def handle_search_commands(request: Request) -> JSONResponse:
 
 
 async def handle_list_subcommands(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["command_prefix"])
+    if isinstance(params, JSONResponse):
+        return params
     result = list_subcommands(command_prefix=params["command_prefix"])
     return JSONResponse(_parse_json(result))
 
 
 async def handle_search_flag(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["flag"])
+    if isinstance(params, JSONResponse):
+        return params
     result = search_flag(flag=params["flag"])
     return JSONResponse(_parse_json(result))
 
 
 async def handle_search_argument(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["argument_name"])
+    if isinstance(params, JSONResponse):
+        return params
     result = search_argument(argument_name=params["argument_name"])
     return JSONResponse(_parse_json(result))
 
 
 async def handle_get_help(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["command_name"])
+    if isinstance(params, JSONResponse):
+        return params
     result = get_help(command_name=params["command_name"])
     return JSONResponse(_parse_json(result))
 
 
 async def handle_get_raw_help(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["command_name"])
+    if isinstance(params, JSONResponse):
+        return params
     raw = get_raw_help(command_name=params["command_name"])
     try:
         return JSONResponse(_parse_json(raw))
@@ -110,7 +144,9 @@ async def handle_get_raw_help(request: Request) -> JSONResponse:
 
 
 async def handle_get_examples(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["command_name"])
+    if isinstance(params, JSONResponse):
+        return params
     result = get_examples(command_name=params["command_name"])
     return JSONResponse(_parse_json(result))
 
@@ -121,46 +157,60 @@ async def handle_list_versions(request: Request) -> JSONResponse:
 
 
 async def handle_find_binary(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["binary_name"])
+    if isinstance(params, JSONResponse):
+        return params
     result = find_binary(binary_name=params["binary_name"])
     return JSONResponse(_parse_json(result))
 
 
 async def handle_search_keyword(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["keyword"])
+    if isinstance(params, JSONResponse):
+        return params
     result = search_keyword(keyword=params["keyword"])
     return JSONResponse(_parse_json(result))
 
 
 async def handle_verify_config(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, [])
+    if isinstance(params, JSONResponse):
+        return params
     name = params.get("name") or params.get("config_name", "")
     result = verify_config(name=name)
     return JSONResponse(_parse_json(result))
 
 
 async def handle_search_config(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, [])
+    if isinstance(params, JSONResponse):
+        return params
     query = params.get("query") or params.get("keyword", "")
     result = search_config(query=query, limit=params.get("limit", 20))
     return JSONResponse(_parse_json(result))
 
 
 async def handle_get_config_help(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, [])
+    if isinstance(params, JSONResponse):
+        return params
     name = params.get("name") or params.get("config_name", "")
     result = get_config_help(name=name)
     return JSONResponse(_parse_json(result))
 
 
 async def handle_list_configs_by_section(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["section"])
+    if isinstance(params, JSONResponse):
+        return params
     result = list_configs_by_section(section=params["section"], limit=params.get("limit", 50))
     return JSONResponse(_parse_json(result))
 
 
 async def handle_validate_script(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["script_content"])
+    if isinstance(params, JSONResponse):
+        return params
     result = validate_script(
         script_content=params["script_content"],
         script_type=params.get("script_type", "auto"),
@@ -169,7 +219,9 @@ async def handle_validate_script(request: Request) -> JSONResponse:
 
 
 async def handle_review_test(request: Request) -> JSONResponse:
-    params = await request.json()
+    params = await _get_params(request, ["script_content"])
+    if isinstance(params, JSONResponse):
+        return params
     result = review_test(
         script_content=params["script_content"],
         script_type=params.get("script_type", "auto"),
@@ -178,16 +230,18 @@ async def handle_review_test(request: Request) -> JSONResponse:
 
 
 async def handle_health(request: Request) -> JSONResponse:
-    from ceph_command_kb.server.mcp_server import _kb_data
-    return JSONResponse({
-        "status": "ok",
-        "kb_loaded": _kb_data is not None,
-        "total_commands": len(_kb_data.get("commands", [])) if _kb_data else 0,
-    })
+    result = health()
+    return JSONResponse(_parse_json(result))
+
+
+async def handle_capabilities(request: Request) -> JSONResponse:
+    result = capabilities()
+    return JSONResponse(_parse_json(result))
 
 
 routes = [
     Route("/health", handle_health, methods=["GET"]),
+    Route("/api/capabilities", handle_capabilities, methods=["GET"]),
     Route("/api/find_command", handle_find_command, methods=["POST"]),
     Route("/api/verify_command", handle_verify_command, methods=["POST"]),
     Route("/api/search_commands", handle_search_commands, methods=["POST"]),

@@ -509,8 +509,8 @@ def verify_config(name: str) -> str:
     cfg = _config_data.get(config_name)
     if cfg is None:
         close = [
-            name for name in _config_data
-            if config_name.lower() in name.lower()
+            key for key in _config_data
+            if config_name.lower() in key.lower()
         ][:10]
         result = {"config": config_name, "verified": False, "status": "NOT_FOUND"}
         if close:
