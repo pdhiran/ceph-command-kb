@@ -74,6 +74,8 @@ def load_kb(kb_dir):
     mcp_server._kb_data = None
     mcp_server._search_index = None
     mcp_server._kb_dir = None
+    mcp_server._commands_map_cache = None
+    mcp_server._config_data = None
 
 
 class TestFindCommand:

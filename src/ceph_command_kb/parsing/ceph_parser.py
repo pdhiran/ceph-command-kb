@@ -17,12 +17,6 @@ from ceph_command_kb.parsing.base import BaseParser
 
 logger = logging.getLogger(__name__)
 
-CEPH_COMMAND_LINE = re.compile(
-    r"^\s*([\w-]+(?:\s+[\w-]+)*)"
-    r"(?:\s+(.+))?"
-    r"\s*$",
-)
-
 CEPH_FLAG = re.compile(
     r"<([\w-]+)(?::([\w-]+))?>",
 )

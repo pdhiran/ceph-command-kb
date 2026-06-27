@@ -170,7 +170,7 @@ def verify_command(
     else:
         all_args_ok = True
 
-    if cmd is not None and all_flags_ok and all_args_ok:
+    if all_flags_ok and all_args_ok:
         result["status"] = "VERIFIED"
     else:
         result["status"] = "PARTIALLY_VERIFIED"

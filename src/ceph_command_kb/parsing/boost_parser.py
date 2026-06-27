@@ -12,24 +12,6 @@ import re
 from ceph_command_kb.models import Argument, ArgumentType, Flag, ParseResult
 from ceph_command_kb.parsing.base import BaseParser
 
-BOOST_FLAG = re.compile(
-    r"^\s+"
-    r"(?:(-\w)\s*\[\s*--([\w-]+)\s*\])"     # -f [ --flag ]
-    r"|(?:(-\w)\s*,?\s*--([\w-]+))"          # -f, --flag  or  -f --flag
-    r"|(?:--([\w-]+))"                         # --flag only
-    r"|(?:(-\w))"                              # -f only
-)
-
-BOOST_FLAG_WITH_DESC = re.compile(
-    r"^\s+"
-    r"(-\w\s*\[\s*--[\w-]+\s*\]|"
-    r"-\w\s*,?\s*--[\w-]+|"
-    r"--[\w-]+|"
-    r"-\w)"
-    r"(?:\s+(arg|ARG|\S+))?"
-    r"\s{2,}(.+)$",
-)
-
 
 class BoostParser(BaseParser):
     """Parser for boost::program_options-style help output."""

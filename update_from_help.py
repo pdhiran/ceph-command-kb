@@ -15,7 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from ceph_command_kb.models import Argument, ArgumentType, Command, Flag, KnowledgeBase
+from ceph_command_kb.models import Command, Flag, KnowledgeBase, extract_keywords
 from ceph_command_kb.parsing.registry import ParserRegistry
 from ceph_command_kb.storage.json_writer import JsonWriter
 from ceph_command_kb.storage.markdown_writer import MarkdownWriter
@@ -321,18 +321,6 @@ def parse_flags_generic(text: str) -> list[Flag]:
     
     return flags
 
-
-def extract_keywords(name: str, desc: str) -> list[str]:
-    stop = {"a","an","the","is","are","to","of","in","for","on","with","at","by","from","and","or","not","this","that","it","its","will"}
-    kw = set()
-    for w in name.split():
-        kw.add(w.lower())
-        if "-" in w:
-            kw.update(w.lower().split("-"))
-    for w in re.findall(r"\w+", desc.lower()):
-        if len(w) > 2 and w not in stop:
-            kw.add(w)
-    return sorted(kw)
 
 
 def main():

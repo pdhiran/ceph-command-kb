@@ -17,6 +17,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import logging
 import sys
 from pathlib import Path
 
@@ -165,7 +166,7 @@ def _reparse(config: Config) -> int:
     from datetime import datetime, timezone
     from ceph_command_kb import __version__
 
-    logger = setup_logging(level=config.log_level)
+    logger = logging.getLogger(__name__)
 
     output_path = Path(config.output_dir)
     version_dirs = sorted(output_path.iterdir()) if output_path.exists() else []
