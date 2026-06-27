@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Type
 
 from ceph_command_kb.parsing.argparse_parser import ArgparseParser
 from ceph_command_kb.parsing.base import BaseParser
@@ -13,7 +12,7 @@ from ceph_command_kb.parsing.generic_parser import GenericParser
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_BINARY_PARSERS: dict[str, Type[BaseParser]] = {
+DEFAULT_BINARY_PARSERS: dict[str, type[BaseParser]] = {
     "ceph": CephParser,
     "rbd": BoostParser,
     "rados": BoostParser,
@@ -53,7 +52,7 @@ class ParserRegistry:
 
     def register_by_name(self, binary: str, parser_name: str) -> None:
         """Register a parser by its class name (for config-driven registration)."""
-        name_map: dict[str, Type[BaseParser]] = {
+        name_map: dict[str, type[BaseParser]] = {
             "ceph": CephParser,
             "argparse": ArgparseParser,
             "boost": BoostParser,

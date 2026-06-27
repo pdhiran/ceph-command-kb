@@ -210,7 +210,6 @@ class CephParser(BaseParser):
 
         We extract the next token after the current prefix as subcommands.
         """
-        prefix_depth = len(command_parts) - 1 if command_parts else 0
         subcommands: list[str] = []
         seen: set[str] = set()
 

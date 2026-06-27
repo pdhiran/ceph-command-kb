@@ -62,7 +62,6 @@ class ArgparseParser(BaseParser):
         current_lines: list[str] = []
 
         lines = text.split("\n")
-        i = 0
 
         for line in lines:
             stripped = line.strip()

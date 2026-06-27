@@ -24,6 +24,7 @@ def setup_logging(
     """
     root = logging.getLogger("ceph_command_kb")
     root.setLevel(getattr(logging, level.upper(), logging.INFO))
+    root.handlers.clear()
 
     formatter = logging.Formatter(
         "%(asctime)s [%(levelname)-7s] %(name)s: %(message)s",

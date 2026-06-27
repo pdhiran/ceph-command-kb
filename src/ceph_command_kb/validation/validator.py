@@ -187,12 +187,22 @@ class Validator:
                 ))
 
     def _find_command(self, name: str) -> dict | None:
-        """Look up a command, trying progressively shorter prefixes."""
+        """Look up a command by exact match or valid parent prefix.
+
+        Only falls back to a shorter prefix if the matched command
+        lists the next word as a known subcommand — prevents false
+        verification of misspelled subcommands.
+        """
+        if name in self._commands:
+            return self._commands[name]
         parts = name.split()
-        for length in range(len(parts), 0, -1):
+        for length in range(len(parts) - 1, 0, -1):
             candidate = " ".join(parts[:length])
             if candidate in self._commands:
-                return self._commands[candidate]
+                cmd = self._commands[candidate]
+                remaining = parts[length]
+                if remaining in cmd.get("subcommands", []):
+                    return cmd
         return None
 
     def _find_similar(self, name: str) -> list[str]:

@@ -77,7 +77,7 @@ class BoostParser(BaseParser):
             section_match = re.match(
                 r"^(positional arguments|optional arguments|options|"
                 r"commands?|subcommands?|pool commands|image commands|"
-                r"snap commands|group commands|.*?commands?)\s*:?\s*$",
+                r"snap commands|group commands|\w+\s+commands?)\s*:?\s*$",
                 stripped,
                 re.IGNORECASE,
             )
@@ -188,13 +188,11 @@ class BoostParser(BaseParser):
         if not short and not long:
             return None
 
-        takes_value = value_name is not None and value_name.lower() != "arg"
-
         return Flag(
             short_form=short,
             long_form=long,
             description=description,
-            takes_value=takes_value or (value_name and value_name.lower() == "arg"),
+            takes_value=value_name is not None,
             value_name=value_name,
         )
 

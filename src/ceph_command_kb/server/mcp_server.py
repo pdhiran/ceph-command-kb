@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 import logging
-import sys
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
@@ -37,11 +36,12 @@ _kb_data: dict | None = None
 _search_index: dict | None = None
 _config_data: dict | None = None
 _kb_dir: Path | None = None
+_commands_map_cache: dict[str, dict] | None = None
 
 
 def _load_knowledge_base(kb_path: Path) -> None:
     """Load the knowledge base, search index, and configs from disk."""
-    global _kb_data, _search_index, _config_data, _kb_dir
+    global _kb_data, _search_index, _config_data, _kb_dir, _commands_map_cache
 
     commands_path = kb_path / "commands.json"
     index_path = kb_path / "search_index.json"
@@ -68,19 +68,17 @@ def _load_knowledge_base(kb_path: Path) -> None:
         _config_data = {}
 
     _kb_dir = kb_path
-    total = len(_kb_data.get("commands", []))
-    logger.info("Loaded knowledge base: %d commands from %s", total, kb_path)
+    _commands_map_cache = {
+        cmd["name"]: cmd for cmd in _kb_data.get("commands", [])
+    }
+    logger.info("Loaded knowledge base: %d commands from %s", len(_commands_map_cache), kb_path)
 
 
 def _get_commands_map() -> dict[str, dict]:
     """Return commands keyed by name for fast lookup."""
-    if _kb_data is None:
+    if _commands_map_cache is None:
         return {}
-    if "_commands_map" not in _kb_data:
-        _kb_data["_commands_map"] = {
-            cmd["name"]: cmd for cmd in _kb_data.get("commands", [])
-        }
-    return _kb_data["_commands_map"]
+    return _commands_map_cache
 
 
 @mcp.tool()
@@ -827,19 +825,26 @@ def run_server(
 
 
 def _find_latest_kb() -> Path | None:
-    """Find the most recently generated knowledge base."""
-    knowledge_dir = Path("knowledge")
-    if not knowledge_dir.exists():
-        return None
+    """Find the most recently generated knowledge base.
 
-    version_dirs = sorted(
-        (d for d in knowledge_dir.iterdir() if d.is_dir() and (d / "commands.json").exists()),
-        key=lambda d: d.stat().st_mtime,
-        reverse=True,
-    )
-
-    if version_dirs:
-        return version_dirs[0]
+    Searches CWD first, then falls back to the project root
+    (relative to this source file) so the server works regardless
+    of which directory it's launched from.
+    """
+    candidates = [
+        Path("knowledge"),
+        Path(__file__).resolve().parent.parent.parent.parent / "knowledge",
+    ]
+    for knowledge_dir in candidates:
+        if not knowledge_dir.is_dir():
+            continue
+        version_dirs = sorted(
+            (d for d in knowledge_dir.iterdir() if d.is_dir() and (d / "commands.json").exists()),
+            key=lambda d: d.stat().st_mtime,
+            reverse=True,
+        )
+        if version_dirs:
+            return version_dirs[0]
     return None
 
 

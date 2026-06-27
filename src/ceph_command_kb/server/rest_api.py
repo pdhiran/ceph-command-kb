@@ -177,6 +177,8 @@ async def handle_verify_config(request: Request) -> JSONResponse:
     if isinstance(params, JSONResponse):
         return params
     name = params.get("name") or params.get("config_name", "")
+    if not name:
+        return _error_response(400, "Missing required field: 'name' or 'config_name'")
     result = verify_config(name=name)
     return JSONResponse(_parse_json(result))
 
@@ -186,6 +188,8 @@ async def handle_search_config(request: Request) -> JSONResponse:
     if isinstance(params, JSONResponse):
         return params
     query = params.get("query") or params.get("keyword", "")
+    if not query:
+        return _error_response(400, "Missing required field: 'query' or 'keyword'")
     result = search_config(query=query, limit=params.get("limit", 20))
     return JSONResponse(_parse_json(result))
 
@@ -195,6 +199,8 @@ async def handle_get_config_help(request: Request) -> JSONResponse:
     if isinstance(params, JSONResponse):
         return params
     name = params.get("name") or params.get("config_name", "")
+    if not name:
+        return _error_response(400, "Missing required field: 'name' or 'config_name'")
     result = get_config_help(name=name)
     return JSONResponse(_parse_json(result))
 
@@ -251,7 +257,7 @@ routes = [
     Route("/api/get_help", handle_get_help, methods=["POST"]),
     Route("/api/get_raw_help", handle_get_raw_help, methods=["POST"]),
     Route("/api/get_examples", handle_get_examples, methods=["POST"]),
-    Route("/api/list_versions", handle_list_versions, methods=["GET", "POST"]),
+    Route("/api/list_versions", handle_list_versions, methods=["GET"]),
     Route("/api/find_binary", handle_find_binary, methods=["POST"]),
     Route("/api/search_keyword", handle_search_keyword, methods=["POST"]),
     Route("/api/verify_config", handle_verify_config, methods=["POST"]),
