@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
+from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 from mcp.types import Icon
@@ -227,12 +228,27 @@ def search_commands(query: str, limit: int = 20) -> str:
 
     results = []
     for score, name, cmd in scored[:limit]:
-        results.append({
+        entry: dict[str, Any] = {
             "name": name,
             "binary": cmd.get("binary"),
             "description": cmd.get("description"),
+            "usage": cmd.get("usage"),
             "has_subcommands": bool(cmd.get("subcommands")),
-        })
+        }
+        args = cmd.get("arguments", [])
+        if args:
+            entry["arguments"] = [
+                {"name": a["name"], "required": a.get("required", False)}
+                for a in args
+            ]
+        flags = cmd.get("flags", [])
+        if flags:
+            entry["flags"] = [
+                f.get("long_form") or f.get("short_form")
+                for f in flags
+            ]
+        entry["synopsis"] = cmd.get("synopsis")
+        results.append(entry)
 
     return json.dumps({"query": query, "total_results": len(results), "results": results}, indent=2)
 
