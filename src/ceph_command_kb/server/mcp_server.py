@@ -789,6 +789,18 @@ def health() -> str:
 SUPPORTED_TRANSPORTS = ("stdio", "sse", "streamable-http")
 
 
+def _silence_stderr_logging() -> None:
+    """Suppress all logging to stderr for stdio transport.
+
+    Cursor classifies any stderr output as [error] in the MCP output panel,
+    making the server appear broken even when healthy.
+    """
+    logging.disable(logging.CRITICAL)
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    logging.root.addHandler(logging.NullHandler())
+
+
 def init_kb(kb_path: str | Path | None = None) -> None:
     """Load the knowledge base. Called before starting any transport."""
     if kb_path is None:
@@ -823,10 +835,12 @@ def run_server(
             f"Supported: {SUPPORTED_TRANSPORTS}"
         )
 
+    if transport == "stdio":
+        _silence_stderr_logging()
+
     init_kb(kb_path)
 
     if transport == "stdio":
-        logger.info("Starting MCP server (stdio transport)")
         mcp.run(transport="stdio")
     elif transport == "sse":
         logger.info("Starting MCP server (SSE transport) on %s:%d", host, port)
