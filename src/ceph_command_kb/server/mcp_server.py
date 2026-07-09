@@ -906,7 +906,31 @@ if __name__ == "__main__":
         default=8080,
         help="Port for HTTP transports (default: 8080)",
     )
+    parser.add_argument(
+        "--auto-update",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Auto-pull latest changes from git on startup (default: enabled)",
+    )
+    parser.add_argument(
+        "--update-interval",
+        type=float,
+        default=1,
+        metavar="HOURS",
+        help="Hours between periodic update checks (default: 1, 0=disable periodic)",
+    )
     args = parser.parse_args()
+
+    if args.auto_update:
+        resolved_kb = args.kb_path or _find_latest_kb()
+        if resolved_kb is not None:
+            from ceph_command_kb.server.auto_update import start_auto_update
+            start_auto_update(
+                Path(resolved_kb),
+                _load_knowledge_base,
+                update_interval_hours=args.update_interval,
+            )
+
     run_server(
         kb_path=args.kb_path,
         transport=args.transport,
