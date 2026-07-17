@@ -222,34 +222,49 @@ def _resolve_version(version: str | None) -> VersionData | None:
     return _versions.get(_default_version_label or "")
 
 
-def _version_required_response() -> str | None:
-    """If multiple versions are loaded and no version was specified, return a
-    JSON prompt listing available versions. Returns None if only one version
-    is loaded (safe to auto-select)."""
+def _version_notice() -> dict | None:
+    """When multiple versions are loaded and no explicit version was specified,
+    return a dict with a note about which version was used and alternatives.
+    Returns None if only one version is loaded."""
     if len(_versions) <= 1:
         return None
 
-    version_options = []
-    for label, vd in sorted(_versions.items()):
-        vi = vd.kb_data.get("version", {})
-        release = vi.get("release_name", "")
-        major = vi.get("major", "")
-        minor = vi.get("minor", "")
-        version_options.append({
-            "label": label,
-            "release_name": release,
-            "hint": f'Use version="{release}" or version="{major}" or version="{major}.{minor}"',
-        })
+    default_vd = _versions.get(_default_version_label or "")
+    if not default_vd:
+        return None
 
-    return json.dumps({
-        "status": "VERSION_REQUIRED",
-        "message": (
-            "Multiple Ceph versions are available in the knowledge base. "
-            "Please ask the user which version they are working with and "
-            "re-call this tool with the 'version' parameter set."
+    vi = default_vd.kb_data.get("version", {})
+    default_release = vi.get("release_name", "")
+    default_major = vi.get("major", "")
+    default_minor = vi.get("minor", "")
+
+    other_versions = []
+    for label, vd in sorted(_versions.items()):
+        if label == _default_version_label:
+            continue
+        ovi = vd.kb_data.get("version", {})
+        rel = ovi.get("release_name", "")
+        maj = ovi.get("major", "")
+        other_versions.append(f"{rel} ({maj}.x) -- use version=\"{rel}\"")
+
+    return {
+        "version_note": (
+            f"Results shown for Ceph {default_major}.{default_minor} {default_release.title()} (default). "
+            f"Other versions available: {', '.join(other_versions)}. "
+            f"Specify the \'version\' parameter to query a different version."
         ),
-        "available_versions": version_options,
-    }, indent=2)
+        "version_used": _default_version_label,
+    }
+
+
+def _inject_version_notice(result: dict, version: str | None) -> dict:
+    """If no version was explicitly specified and multiple versions exist,
+    add a version_note to the result dict."""
+    if version is None:
+        notice = _version_notice()
+        if notice:
+            result.update(notice)
+    return result
 
 
 def _get_commands_map(version: str | None = None) -> dict[str, dict]:
@@ -295,13 +310,8 @@ def find_command(command_name: str, version: str | None = None) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
-        version: Ceph version to query — REQUIRED when multiple versions are loaded. Accepts release name ('squid', 'tentacle'), IBM version ('8.1', '9.1'), or major ('19', '20'). Ask the user which version if not clear from context.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     commands = _get_commands_map(version)
     cmd = commands.get(command_name)
 
@@ -313,9 +323,9 @@ def find_command(command_name: str, version: str | None = None) -> str:
         result: dict[str, Any] = {"found": False, "command": command_name}
         if close:
             result["similar_commands"] = close
-        return json.dumps(result, indent=2)
+        return json.dumps(_inject_version_notice(result, version), indent=2)
 
-    return json.dumps({"found": True, "command": cmd}, indent=2)
+    return json.dumps(_inject_version_notice({"found": True, "command": cmd}, version), indent=2)
 
 
 @mcp.tool()
@@ -335,13 +345,8 @@ def verify_command(
         command: The full command to verify, e.g. 'ceph osd pool create'
         flags: Optional list of flags to verify, e.g. ['--size', '--pg-num']
         arguments: Optional list of argument names to verify, e.g. ['pool', 'pg_num']
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     commands = _get_commands_map(version)
     cmd = commands.get(command)
 
@@ -359,7 +364,7 @@ def verify_command(
         ][:5]
         if close:
             result["similar_commands"] = close
-        return json.dumps(result, indent=2)
+        return json.dumps(_inject_version_notice(result, version), indent=2)
 
     if flags:
         flag_results = {}
@@ -397,7 +402,7 @@ def verify_command(
     result["usage"] = cmd.get("usage")
     result["description"] = cmd.get("description")
 
-    return json.dumps(result, indent=2)
+    return json.dumps(_inject_version_notice(result, version), indent=2)
 
 
 @mcp.tool()
@@ -410,13 +415,8 @@ def search_commands(query: str, limit: int = 20, version: str | None = None) -> 
     Args:
         query: Search term (partial command name, keyword, or description fragment)
         limit: Maximum number of results to return (default 20)
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     commands = _get_commands_map(version)
     query_lower = query.lower()
     query_words = query_lower.split()
@@ -473,7 +473,7 @@ def search_commands(query: str, limit: int = 20, version: str | None = None) -> 
         entry["synopsis"] = cmd.get("synopsis")
         results.append(entry)
 
-    return json.dumps({"query": query, "total_results": len(results), "results": results}, indent=2)
+    return json.dumps(_inject_version_notice({"query": query, "total_results": len(results), "results": results}, version), indent=2)
 
 
 @mcp.tool()
@@ -484,13 +484,8 @@ def list_subcommands(command_prefix: str, version: str | None = None) -> str:
 
     Args:
         command_prefix: The command prefix, e.g. 'ceph osd' or 'rbd'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     commands = _get_commands_map(version)
     cmd = commands.get(command_prefix)
 
@@ -503,10 +498,10 @@ def list_subcommands(command_prefix: str, version: str | None = None) -> str:
                 "name": full_name,
                 "description": sub_cmd.get("description", ""),
             })
-        return json.dumps({
+        return json.dumps(_inject_version_notice({
             "command": command_prefix,
             "subcommands": subs,
-        }, indent=2)
+        }, version), indent=2)
 
     prefix_lower = command_prefix.lower()
     children = []
@@ -517,10 +512,10 @@ def list_subcommands(command_prefix: str, version: str | None = None) -> str:
                 "description": c.get("description", ""),
             })
 
-    return json.dumps({
+    return json.dumps(_inject_version_notice({
         "command": command_prefix,
         "subcommands": children,
-    }, indent=2)
+    }, version), indent=2)
 
 
 @mcp.tool()
@@ -531,21 +526,16 @@ def search_flag(flag: str, version: str | None = None) -> str:
 
     Args:
         flag: The flag to search for, e.g. '--pool' or '-p'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     si = _get_search_index(version)
     if si and "by_flag" in si:
         commands = si["by_flag"].get(flag, [])
-        return json.dumps({
+        return json.dumps(_inject_version_notice({
             "flag": flag,
             "found": bool(commands),
             "commands": commands,
-        }, indent=2)
+        }, version), indent=2)
 
     commands_map = _get_commands_map(version)
     matching = []
@@ -555,11 +545,11 @@ def search_flag(flag: str, version: str | None = None) -> str:
                 matching.append(name)
                 break
 
-    return json.dumps({
+    return json.dumps(_inject_version_notice({
         "flag": flag,
         "found": bool(matching),
         "commands": sorted(matching),
-    }, indent=2)
+    }, version), indent=2)
 
 
 @mcp.tool()
@@ -570,21 +560,16 @@ def search_argument(argument_name: str, version: str | None = None) -> str:
 
     Args:
         argument_name: The argument name, e.g. 'pool' or 'image'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     si = _get_search_index(version)
     if si and "by_argument" in si:
         commands = si["by_argument"].get(argument_name, [])
-        return json.dumps({
+        return json.dumps(_inject_version_notice({
             "argument": argument_name,
             "found": bool(commands),
             "commands": commands,
-        }, indent=2)
+        }, version), indent=2)
 
     commands_map = _get_commands_map(version)
     matching = []
@@ -594,11 +579,11 @@ def search_argument(argument_name: str, version: str | None = None) -> str:
                 matching.append(name)
                 break
 
-    return json.dumps({
+    return json.dumps(_inject_version_notice({
         "argument": argument_name,
         "found": bool(matching),
         "commands": sorted(matching),
-    }, indent=2)
+    }, version), indent=2)
 
 
 @mcp.tool()
@@ -610,20 +595,15 @@ def get_help(command_name: str, version: str | None = None) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     commands = _get_commands_map(version)
     cmd = commands.get(command_name)
 
     if cmd is None:
-        return json.dumps({"found": False, "command": command_name}, indent=2)
+        return json.dumps(_inject_version_notice({"found": False, "command": command_name}, version), indent=2)
 
-    return json.dumps({
+    return json.dumps(_inject_version_notice({
         "found": True,
         "name": cmd.get("name"),
         "binary": cmd.get("binary"),
@@ -635,7 +615,7 @@ def get_help(command_name: str, version: str | None = None) -> str:
         "subcommands": cmd.get("subcommands", []),
         "examples": cmd.get("examples", []),
         "notes": cmd.get("notes"),
-    }, indent=2)
+    }, version), indent=2)
 
 
 @mcp.tool()
@@ -647,13 +627,8 @@ def get_raw_help(command_name: str, version: str | None = None) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     kb_dir = _get_kb_dir(version)
     if kb_dir:
         filename = command_name.replace(" ", "-") + ".txt"
@@ -675,25 +650,20 @@ def get_examples(command_name: str, version: str | None = None) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     commands = _get_commands_map(version)
     cmd = commands.get(command_name)
 
     if cmd is None:
-        return json.dumps({"found": False, "command": command_name}, indent=2)
+        return json.dumps(_inject_version_notice({"found": False, "command": command_name}, version), indent=2)
 
-    return json.dumps({
+    return json.dumps(_inject_version_notice({
         "found": True,
         "command": command_name,
         "examples": cmd.get("examples", []),
         "usage": cmd.get("usage"),
-    }, indent=2)
+    }, version), indent=2)
 
 
 @mcp.tool()
@@ -733,22 +703,17 @@ def find_binary(binary_name: str, version: str | None = None) -> str:
 
     Args:
         binary_name: The binary name, e.g. 'rbd', 'rados', 'cephadm'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     si = _get_search_index(version)
     if si and "by_binary" in si:
         commands = si["by_binary"].get(binary_name, [])
-        return json.dumps({
+        return json.dumps(_inject_version_notice({
             "binary": binary_name,
             "found": bool(commands),
             "total_commands": len(commands),
             "commands": commands,
-        }, indent=2)
+        }, version), indent=2)
 
     commands_map = _get_commands_map(version)
     matching = sorted(
@@ -756,12 +721,12 @@ def find_binary(binary_name: str, version: str | None = None) -> str:
         if cmd.get("binary") == binary_name
     )
 
-    return json.dumps({
+    return json.dumps(_inject_version_notice({
         "binary": binary_name,
         "found": bool(matching),
         "total_commands": len(matching),
         "commands": matching,
-    }, indent=2)
+    }, version), indent=2)
 
 
 @mcp.tool()
@@ -773,22 +738,17 @@ def search_keyword(keyword: str, version: str | None = None) -> str:
 
     Args:
         keyword: The keyword to search for, e.g. 'pool', 'snapshot', 'crush'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     si = _get_search_index(version)
     if si and "by_keyword" in si:
         commands = si["by_keyword"].get(keyword.lower(), [])
         if commands:
-            return json.dumps({
+            return json.dumps(_inject_version_notice({
                 "keyword": keyword,
                 "found": True,
                 "commands": commands,
-            }, indent=2)
+            }, version), indent=2)
 
     return search_commands(keyword, version=version)
 
@@ -806,13 +766,8 @@ def verify_config(name: str, version: str | None = None) -> str:
 
     Args:
         name: The config parameter name, e.g. 'osd_pool_default_size'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     config_data = _get_config_data(version)
     if not config_data:
         return json.dumps({"status": "NO_CONFIG_DATA", "reason": "Config knowledge base not loaded"})
@@ -827,9 +782,9 @@ def verify_config(name: str, version: str | None = None) -> str:
         result = {"config": config_name, "verified": False, "status": "NOT_FOUND"}
         if close:
             result["similar_configs"] = close
-        return json.dumps(result, indent=2)
+        return json.dumps(_inject_version_notice(result, version), indent=2)
 
-    return json.dumps({
+    return json.dumps(_inject_version_notice({
         "config": config_name,
         "verified": True,
         "status": "VERIFIED",
@@ -844,7 +799,7 @@ def verify_config(name: str, version: str | None = None) -> str:
         "max": cfg.get("max"),
         "enum_allowed": cfg.get("enum_allowed"),
         "daemon_defaults": cfg.get("daemon_defaults"),
-    }, indent=2)
+    }, version), indent=2)
 
 
 @mcp.tool()
@@ -857,13 +812,8 @@ def search_config(query: str, limit: int = 20, version: str | None = None) -> st
     Args:
         query: Search term (keyword, partial name, or description fragment), e.g. 'pool size', 'osd recovery', 'fast_ec'
         limit: Max results (default 20)
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     config_data = _get_config_data(version)
     if not config_data:
         return json.dumps({"query": query, "total_results": 0, "results": []})
@@ -904,7 +854,7 @@ def search_config(query: str, limit: int = 20, version: str | None = None) -> st
             "can_update_at_runtime": cfg.get("can_update_at_runtime"),
         })
 
-    return json.dumps({"query": query, "total_results": len(results), "results": results}, indent=2)
+    return json.dumps(_inject_version_notice({"query": query, "total_results": len(results), "results": results}, version), indent=2)
 
 
 @mcp.tool()
@@ -916,13 +866,8 @@ def get_config_help(name: str, version: str | None = None) -> str:
 
     Args:
         name: The config parameter name, e.g. 'osd_pool_default_size'
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     config_data = _get_config_data(version)
     if not config_data:
         return json.dumps({"found": False, "config": name})
@@ -931,7 +876,7 @@ def get_config_help(name: str, version: str | None = None) -> str:
     if cfg is None:
         return json.dumps({"found": False, "config": name})
 
-    return json.dumps({"found": True, **cfg}, indent=2)
+    return json.dumps(_inject_version_notice({"found": True, **cfg}, version), indent=2)
 
 
 @mcp.tool()
@@ -944,13 +889,8 @@ def list_configs_by_section(section: str, limit: int = 50, version: str | None =
     Args:
         section: The config name prefix, e.g. 'osd', 'mon', 'rgw', 'auth'
         limit: Max results (default 50)
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     config_data = _get_config_data(version)
     if not config_data:
         return json.dumps({"section": section, "total": 0, "configs": []})
@@ -967,11 +907,11 @@ def list_configs_by_section(section: str, limit: int = 50, version: str | None =
                 "desc": cfg.get("desc"),
             })
 
-    return json.dumps({
+    return json.dumps(_inject_version_notice({
         "section": section,
         "total": len(matching),
         "configs": matching[:limit],
-    }, indent=2)
+    }, version), indent=2)
 
 
 # ── Test validation tools ──────────────────────────────────────────────
@@ -991,13 +931,8 @@ def validate_script(script_content: str, script_type: str = "auto", version: str
     Args:
         script_content: The full text content of the test script.
         script_type: Script language — "python", "shell", "yaml", or "auto" (detect).
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     from ceph_command_kb.validation.validator import Validator
 
     commands = _get_commands_map(version)
@@ -1015,7 +950,7 @@ def validate_script(script_content: str, script_type: str = "auto", version: str
         "warnings": report.warning_count,
         "findings": [f.to_dict() for f in report.findings if f.severity in ("error", "warning")],
     }
-    return json.dumps(result, indent=2)
+    return json.dumps(_inject_version_notice(result, version), indent=2)
 
 
 @mcp.tool()
@@ -1036,13 +971,8 @@ def review_test(script_content: str, script_type: str = "auto", version: str | N
     Args:
         script_content: The full text content of the test script.
         script_type: Script language — "python", "shell", "yaml", or "auto" (detect).
-        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
+        version: Ceph version to query. Accepts 'squid', 'tentacle', '8.1', '9.1', '19', '20'. If omitted, uses default (latest) and the response notes which version was used.
     """
-    if version is None:
-        prompt = _version_required_response()
-        if prompt:
-            return prompt
-
     from ceph_command_kb.validation.validator import Validator
 
     commands = _get_commands_map(version)
@@ -1052,7 +982,7 @@ def review_test(script_content: str, script_type: str = "auto", version: str | N
     validator = Validator(commands)
     report = validator.validate(script_content, script_type=script_type)
 
-    return json.dumps(report.to_dict(), indent=2)
+    return json.dumps(_inject_version_notice(report.to_dict(), version), indent=2)
 
 
 # ── Platform contract tools ────────────────────────────────────────────
