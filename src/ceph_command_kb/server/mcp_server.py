@@ -24,15 +24,47 @@ CEPH_ICON = Icon(
 mcp = FastMCP(
     "Ceph Command Knowledge Base",
     instructions=(
-        "Authoritative knowledge base of 1,254 Ceph CLI commands and 2,660 config parameters. "
+        "Multi-version Ceph CLI knowledge base covering Ceph Squid 19.x (IBM Storage Ceph 8.x) "
+        "and Ceph Tentacle 20.x (IBM Storage Ceph 9.x). "
         "Use this MCP when you need to: verify Ceph commands before generating them, "
         "check if flags or arguments are valid, look up config parameter defaults and constraints, "
         "search for commands by keyword, or review test scripts for correctness. "
+        "Tools accept an optional 'version' parameter to target a specific Ceph release "
+        "(e.g. 'squid', 'tentacle', '19', '20', '8.1', '9.1'). "
         "Always verify commands against this KB before writing Ceph automation or tests."
     ),
     icons=[CEPH_ICON],
 )
 
+
+class VersionData:
+    """Holds loaded data for a single knowledge base version."""
+
+    __slots__ = ("label", "kb_data", "search_index", "config_data", "commands_map", "kb_dir")
+
+    def __init__(self, label: str, kb_data: dict, search_index: dict,
+                 config_data: dict[str, dict], commands_map: dict[str, dict],
+                 kb_dir: Path):
+        self.label = label
+        self.kb_data = kb_data
+        self.search_index = search_index
+        self.config_data = config_data
+        self.commands_map = commands_map
+        self.kb_dir = kb_dir
+
+
+_versions: dict[str, VersionData] = {}
+_default_version_label: str | None = None
+
+# IBM Storage Ceph -> upstream Ceph mapping for flexible version resolution
+_VERSION_ALIASES: dict[str, str] = {
+    "8": "squid", "8.0": "squid", "8.1": "squid",
+    "19": "squid", "19.2": "squid",
+    "9": "tentacle", "9.0": "tentacle", "9.1": "tentacle",
+    "20": "tentacle", "20.2": "tentacle",
+}
+
+# Backward-compat globals (point to default version)
 _kb_data: dict | None = None
 _search_index: dict | None = None
 _config_data: dict | None = None
@@ -40,10 +72,8 @@ _kb_dir: Path | None = None
 _commands_map_cache: dict[str, dict] | None = None
 
 
-def _load_knowledge_base(kb_path: Path) -> None:
-    """Load the knowledge base, search index, and configs from disk."""
-    global _kb_data, _search_index, _config_data, _kb_dir, _commands_map_cache
-
+def _load_version(kb_path: Path) -> VersionData:
+    """Load a single knowledge base version from disk."""
     commands_path = kb_path / "commands.json"
     index_path = kb_path / "search_index.json"
     configs_path = kb_path / "configs.json"
@@ -52,38 +82,166 @@ def _load_knowledge_base(kb_path: Path) -> None:
         raise FileNotFoundError(f"commands.json not found in {kb_path}")
 
     with open(commands_path) as f:
-        _kb_data = json.load(f)
+        kb_data = json.load(f)
 
     if index_path.exists():
         with open(index_path) as f:
-            _search_index = json.load(f)
+            search_index = json.load(f)
     else:
-        _search_index = {}
+        search_index = {}
 
     if configs_path.exists():
         with open(configs_path) as f:
             raw = json.load(f)
-        _config_data = {cfg["name"]: cfg for cfg in raw.get("configs", [])}
-        logger.info("Loaded %d config options", len(_config_data))
+        config_data = {cfg["name"]: cfg for cfg in raw.get("configs", [])}
     else:
-        _config_data = {}
+        config_data = {}
 
-    _kb_dir = kb_path
-    _commands_map_cache = {
-        cmd["name"]: cmd for cmd in _kb_data.get("commands", [])
-    }
-    logger.info("Loaded knowledge base: %d commands from %s", len(_commands_map_cache), kb_path)
+    commands_map = {cmd["name"]: cmd for cmd in kb_data.get("commands", [])}
+
+    version_info = kb_data.get("version", {})
+    label = version_info.get("label", kb_path.name)
+
+    logger.info("Loaded version %s: %d commands, %d configs from %s",
+                label, len(commands_map), len(config_data), kb_path)
+
+    return VersionData(
+        label=label, kb_data=kb_data, search_index=search_index,
+        config_data=config_data, commands_map=commands_map, kb_dir=kb_path,
+    )
 
 
-def _get_commands_map() -> dict[str, dict]:
+def _load_knowledge_base(kb_path: Path) -> None:
+    """Load a knowledge base version (backward-compat entry point for auto_update)."""
+    global _kb_data, _search_index, _config_data, _kb_dir, _commands_map_cache
+
+    vd = _load_version(kb_path)
+    _versions[vd.label] = vd
+
+    # Update backward-compat globals to point at this version
+    _kb_data = vd.kb_data
+    _search_index = vd.search_index
+    _config_data = vd.config_data
+    _kb_dir = vd.kb_dir
+    _commands_map_cache = vd.commands_map
+
+
+def _load_all_versions(knowledge_dir: Path) -> None:
+    """Load every version directory found under the knowledge base root."""
+    global _default_version_label
+
+    if not knowledge_dir.is_dir():
+        return
+
+    version_dirs = sorted(
+        (d for d in knowledge_dir.iterdir()
+         if d.is_dir() and (d / "commands.json").exists()),
+        key=lambda d: d.name,
+    )
+
+    for vdir in version_dirs:
+        try:
+            vd = _load_version(vdir)
+            _versions[vd.label] = vd
+        except Exception as e:
+            logger.warning("Failed to load version from %s: %s", vdir, e)
+
+    if _versions:
+        # Default to the latest version (highest major.minor.patch)
+        _default_version_label = sorted(_versions.keys())[-1]
+        _set_compat_globals(_default_version_label)
+        logger.info("Loaded %d versions, default: %s", len(_versions), _default_version_label)
+
+
+def _set_compat_globals(label: str) -> None:
+    """Update backward-compat module globals to point at a specific version."""
+    global _kb_data, _search_index, _config_data, _kb_dir, _commands_map_cache
+    vd = _versions.get(label)
+    if vd:
+        _kb_data = vd.kb_data
+        _search_index = vd.search_index
+        _config_data = vd.config_data
+        _kb_dir = vd.kb_dir
+        _commands_map_cache = vd.commands_map
+
+
+def _resolve_version(version: str | None) -> VersionData | None:
+    """Resolve a version hint to a loaded VersionData.
+
+    Accepts: full label ('ceph-19.2.1-squid'), release name ('squid'),
+    major version ('19'), IBM product version ('8.1'), or None (default).
+    """
+    if not _versions:
+        return None
+
+    if version is None:
+        return _versions.get(_default_version_label or "")
+
+    v = version.strip().lower()
+
+    # Exact label match
+    for label, vd in _versions.items():
+        if v == label.lower():
+            return vd
+
+    # Release name match (e.g. 'squid', 'tentacle')
+    for label, vd in _versions.items():
+        release = vd.kb_data.get("version", {}).get("release_name", "").lower()
+        if v == release:
+            return vd
+
+    # Alias lookup (IBM product versions, major versions)
+    alias_release = _VERSION_ALIASES.get(v)
+    if alias_release:
+        for label, vd in _versions.items():
+            release = vd.kb_data.get("version", {}).get("release_name", "").lower()
+            if alias_release == release:
+                return vd
+
+    # Substring match on label
+    for label, vd in _versions.items():
+        if v in label.lower():
+            return vd
+
+    return _versions.get(_default_version_label or "")
+
+
+def _get_commands_map(version: str | None = None) -> dict[str, dict]:
     """Return commands keyed by name for fast lookup."""
-    if _commands_map_cache is None:
-        return {}
-    return _commands_map_cache
+    vd = _resolve_version(version)
+    if vd:
+        return vd.commands_map
+    if _commands_map_cache is not None:
+        return _commands_map_cache
+    return {}
+
+
+def _get_config_data(version: str | None = None) -> dict[str, dict]:
+    """Return config data for a specific version."""
+    vd = _resolve_version(version)
+    if vd:
+        return vd.config_data
+    return _config_data or {}
+
+
+def _get_search_index(version: str | None = None) -> dict:
+    """Return search index for a specific version."""
+    vd = _resolve_version(version)
+    if vd:
+        return vd.search_index
+    return _search_index or {}
+
+
+def _get_kb_dir(version: str | None = None) -> Path | None:
+    """Return KB directory path for a specific version."""
+    vd = _resolve_version(version)
+    if vd:
+        return vd.kb_dir
+    return _kb_dir
 
 
 @mcp.tool()
-def find_command(command_name: str) -> str:
+def find_command(command_name: str, version: str | None = None) -> str:
     """Look up a specific Ceph command by its exact full name.
 
     Use this when you know the full command name (e.g. 'ceph osd pool create')
@@ -91,8 +249,9 @@ def find_command(command_name: str) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1', '19', '20')
     """
-    commands = _get_commands_map()
+    commands = _get_commands_map(version)
     cmd = commands.get(command_name)
 
     if cmd is None:
@@ -100,7 +259,7 @@ def find_command(command_name: str) -> str:
             name for name in commands
             if command_name.lower() in name.lower()
         ][:5]
-        result = {"found": False, "command": command_name}
+        result: dict[str, Any] = {"found": False, "command": command_name}
         if close:
             result["similar_commands"] = close
         return json.dumps(result, indent=2)
@@ -113,6 +272,7 @@ def verify_command(
     command: str,
     flags: list[str] | None = None,
     arguments: list[str] | None = None,
+    version: str | None = None,
 ) -> str:
     """Verify that a Ceph command, its flags, and arguments are valid.
 
@@ -124,8 +284,9 @@ def verify_command(
         command: The full command to verify, e.g. 'ceph osd pool create'
         flags: Optional list of flags to verify, e.g. ['--size', '--pg-num']
         arguments: Optional list of argument names to verify, e.g. ['pool', 'pg_num']
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    commands = _get_commands_map()
+    commands = _get_commands_map(version)
     cmd = commands.get(command)
 
     result: dict = {
@@ -184,7 +345,7 @@ def verify_command(
 
 
 @mcp.tool()
-def search_commands(query: str, limit: int = 20) -> str:
+def search_commands(query: str, limit: int = 20, version: str | None = None) -> str:
     """Search for Ceph commands by name, description, or keyword.
 
     Use this when you're looking for a command but don't know the exact name.
@@ -193,8 +354,9 @@ def search_commands(query: str, limit: int = 20) -> str:
     Args:
         query: Search term (partial command name, keyword, or description fragment)
         limit: Maximum number of results to return (default 20)
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    commands = _get_commands_map()
+    commands = _get_commands_map(version)
     query_lower = query.lower()
     query_words = query_lower.split()
 
@@ -254,15 +416,16 @@ def search_commands(query: str, limit: int = 20) -> str:
 
 
 @mcp.tool()
-def list_subcommands(command_prefix: str) -> str:
+def list_subcommands(command_prefix: str, version: str | None = None) -> str:
     """List all subcommands under a given command prefix.
 
     Use this to explore the command tree, e.g. 'ceph osd' to see all osd subcommands.
 
     Args:
         command_prefix: The command prefix, e.g. 'ceph osd' or 'rbd'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    commands = _get_commands_map()
+    commands = _get_commands_map(version)
     cmd = commands.get(command_prefix)
 
     if cmd and cmd.get("subcommands"):
@@ -295,23 +458,25 @@ def list_subcommands(command_prefix: str) -> str:
 
 
 @mcp.tool()
-def search_flag(flag: str) -> str:
+def search_flag(flag: str, version: str | None = None) -> str:
     """Find which commands accept a specific flag.
 
     Use this to check if a flag is valid and which commands support it.
 
     Args:
         flag: The flag to search for, e.g. '--pool' or '-p'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    if _search_index and "by_flag" in _search_index:
-        commands = _search_index["by_flag"].get(flag, [])
+    si = _get_search_index(version)
+    if si and "by_flag" in si:
+        commands = si["by_flag"].get(flag, [])
         return json.dumps({
             "flag": flag,
             "found": bool(commands),
             "commands": commands,
         }, indent=2)
 
-    commands_map = _get_commands_map()
+    commands_map = _get_commands_map(version)
     matching = []
     for name, cmd in commands_map.items():
         for f in cmd.get("flags", []):
@@ -327,23 +492,25 @@ def search_flag(flag: str) -> str:
 
 
 @mcp.tool()
-def search_argument(argument_name: str) -> str:
+def search_argument(argument_name: str, version: str | None = None) -> str:
     """Find which commands accept a specific argument.
 
     Use this to check if an argument name is valid and which commands use it.
 
     Args:
         argument_name: The argument name, e.g. 'pool' or 'image'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    if _search_index and "by_argument" in _search_index:
-        commands = _search_index["by_argument"].get(argument_name, [])
+    si = _get_search_index(version)
+    if si and "by_argument" in si:
+        commands = si["by_argument"].get(argument_name, [])
         return json.dumps({
             "argument": argument_name,
             "found": bool(commands),
             "commands": commands,
         }, indent=2)
 
-    commands_map = _get_commands_map()
+    commands_map = _get_commands_map(version)
     matching = []
     for name, cmd in commands_map.items():
         for a in cmd.get("arguments", []):
@@ -359,7 +526,7 @@ def search_argument(argument_name: str) -> str:
 
 
 @mcp.tool()
-def get_help(command_name: str) -> str:
+def get_help(command_name: str, version: str | None = None) -> str:
     """Get the parsed help information for a specific command.
 
     Returns the full structured metadata including usage, description,
@@ -367,8 +534,9 @@ def get_help(command_name: str) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    commands = _get_commands_map()
+    commands = _get_commands_map(version)
     cmd = commands.get(command_name)
 
     if cmd is None:
@@ -390,7 +558,7 @@ def get_help(command_name: str) -> str:
 
 
 @mcp.tool()
-def get_raw_help(command_name: str) -> str:
+def get_raw_help(command_name: str, version: str | None = None) -> str:
     """Get the original raw help text output for a command.
 
     Use this when the parsed data is insufficient and you need the
@@ -398,14 +566,16 @@ def get_raw_help(command_name: str) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    if _kb_dir:
+    kb_dir = _get_kb_dir(version)
+    if kb_dir:
         filename = command_name.replace(" ", "-") + ".txt"
-        raw_path = (_kb_dir / "raw_help" / filename).resolve()
-        if raw_path.is_relative_to((_kb_dir / "raw_help").resolve()) and raw_path.exists():
+        raw_path = (kb_dir / "raw_help" / filename).resolve()
+        if raw_path.is_relative_to((kb_dir / "raw_help").resolve()) and raw_path.exists():
             return raw_path.read_text(encoding="utf-8")
 
-    commands = _get_commands_map()
+    commands = _get_commands_map(version)
     cmd = commands.get(command_name)
     if cmd and cmd.get("raw_help"):
         return cmd["raw_help"]
@@ -414,13 +584,14 @@ def get_raw_help(command_name: str) -> str:
 
 
 @mcp.tool()
-def get_examples(command_name: str) -> str:
+def get_examples(command_name: str, version: str | None = None) -> str:
     """Get usage examples for a specific command.
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    commands = _get_commands_map()
+    commands = _get_commands_map(version)
     cmd = commands.get(command_name)
 
     if cmd is None:
@@ -439,26 +610,43 @@ def list_versions() -> str:
     """List all available knowledge base versions.
 
     Use this to check which Ceph versions have been indexed.
+    Returns version labels, command/config counts, and the default version.
     """
-    if _kb_data and "version" in _kb_data:
-        return json.dumps({
-            "versions": [_kb_data["version"]],
-        }, indent=2)
+    versions = []
+    for label, vd in sorted(_versions.items()):
+        vi = vd.kb_data.get("version", {})
+        versions.append({
+            "label": label,
+            "release_name": vi.get("release_name", ""),
+            "full_string": vi.get("full_string", ""),
+            "major": vi.get("major"),
+            "minor": vi.get("minor"),
+            "patch": vi.get("patch"),
+            "total_commands": len(vd.commands_map),
+            "total_configs": len(vd.config_data),
+            "is_default": label == _default_version_label,
+        })
 
-    return json.dumps({"versions": []}, indent=2)
+    return json.dumps({
+        "total_versions": len(versions),
+        "default_version": _default_version_label,
+        "versions": versions,
+    }, indent=2)
 
 
 @mcp.tool()
-def find_binary(binary_name: str) -> str:
+def find_binary(binary_name: str, version: str | None = None) -> str:
     """List all commands for a specific binary.
 
     Use this to see everything available under a binary like 'rbd' or 'rados'.
 
     Args:
         binary_name: The binary name, e.g. 'rbd', 'rados', 'cephadm'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    if _search_index and "by_binary" in _search_index:
-        commands = _search_index["by_binary"].get(binary_name, [])
+    si = _get_search_index(version)
+    if si and "by_binary" in si:
+        commands = si["by_binary"].get(binary_name, [])
         return json.dumps({
             "binary": binary_name,
             "found": bool(commands),
@@ -466,7 +654,7 @@ def find_binary(binary_name: str) -> str:
             "commands": commands,
         }, indent=2)
 
-    commands_map = _get_commands_map()
+    commands_map = _get_commands_map(version)
     matching = sorted(
         name for name, cmd in commands_map.items()
         if cmd.get("binary") == binary_name
@@ -481,7 +669,7 @@ def find_binary(binary_name: str) -> str:
 
 
 @mcp.tool()
-def search_keyword(keyword: str) -> str:
+def search_keyword(keyword: str, version: str | None = None) -> str:
     """Search commands by keyword across all metadata.
 
     Searches through command names, descriptions, arguments, flags,
@@ -489,9 +677,11 @@ def search_keyword(keyword: str) -> str:
 
     Args:
         keyword: The keyword to search for, e.g. 'pool', 'snapshot', 'crush'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    if _search_index and "by_keyword" in _search_index:
-        commands = _search_index["by_keyword"].get(keyword.lower(), [])
+    si = _get_search_index(version)
+    if si and "by_keyword" in si:
+        commands = si["by_keyword"].get(keyword.lower(), [])
         if commands:
             return json.dumps({
                 "keyword": keyword,
@@ -499,14 +689,14 @@ def search_keyword(keyword: str) -> str:
                 "commands": commands,
             }, indent=2)
 
-    return search_commands(keyword)
+    return search_commands(keyword, version=version)
 
 
 # ── Config verification tools ──────────────────────────────────────────
 
 
 @mcp.tool()
-def verify_config(name: str) -> str:
+def verify_config(name: str, version: str | None = None) -> str:
     """Verify that a Ceph configuration parameter exists and is valid.
 
     Use this BEFORE setting any Ceph config in automation or tests.
@@ -515,15 +705,17 @@ def verify_config(name: str) -> str:
 
     Args:
         name: The config parameter name, e.g. 'osd_pool_default_size'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    if not _config_data:
+    config_data = _get_config_data(version)
+    if not config_data:
         return json.dumps({"status": "NO_CONFIG_DATA", "reason": "Config knowledge base not loaded"})
 
     config_name = name
-    cfg = _config_data.get(config_name)
+    cfg = config_data.get(config_name)
     if cfg is None:
         close = [
-            key for key in _config_data
+            key for key in config_data
             if config_name.lower() in key.lower()
         ][:10]
         result = {"config": config_name, "verified": False, "status": "NOT_FOUND"}
@@ -550,7 +742,7 @@ def verify_config(name: str) -> str:
 
 
 @mcp.tool()
-def search_config(query: str, limit: int = 20) -> str:
+def search_config(query: str, limit: int = 20, version: str | None = None) -> str:
     """Search for Ceph config parameters by name, description, or keyword.
 
     Use this when looking for a config option but not sure of the exact name.
@@ -559,8 +751,10 @@ def search_config(query: str, limit: int = 20) -> str:
     Args:
         query: Search term (keyword, partial name, or description fragment), e.g. 'pool size', 'osd recovery', 'fast_ec'
         limit: Max results (default 20)
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    if not _config_data:
+    config_data = _get_config_data(version)
+    if not config_data:
         return json.dumps({"query": query, "total_results": 0, "results": []})
 
     query_lower = query.lower()
@@ -568,7 +762,7 @@ def search_config(query: str, limit: int = 20) -> str:
 
     scored: list[tuple[float, str, dict]] = []
 
-    for name, cfg in _config_data.items():
+    for name, cfg in config_data.items():
         score = 0.0
         name_lower = name.lower()
 
@@ -603,7 +797,7 @@ def search_config(query: str, limit: int = 20) -> str:
 
 
 @mcp.tool()
-def get_config_help(name: str) -> str:
+def get_config_help(name: str, version: str | None = None) -> str:
     """Get full metadata for a Ceph config parameter.
 
     Returns type, default, description, constraints, daemon-specific
@@ -611,11 +805,13 @@ def get_config_help(name: str) -> str:
 
     Args:
         name: The config parameter name, e.g. 'osd_pool_default_size'
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    if not _config_data:
+    config_data = _get_config_data(version)
+    if not config_data:
         return json.dumps({"found": False, "config": name})
 
-    cfg = _config_data.get(name)
+    cfg = config_data.get(name)
     if cfg is None:
         return json.dumps({"found": False, "config": name})
 
@@ -623,7 +819,7 @@ def get_config_help(name: str) -> str:
 
 
 @mcp.tool()
-def list_configs_by_section(section: str, limit: int = 50) -> str:
+def list_configs_by_section(section: str, limit: int = 50, version: str | None = None) -> str:
     """List all config parameters that belong to a section/prefix.
 
     Ceph config names are prefixed by subsystem, e.g. 'osd_', 'mon_',
@@ -632,14 +828,16 @@ def list_configs_by_section(section: str, limit: int = 50) -> str:
     Args:
         section: The config name prefix, e.g. 'osd', 'mon', 'rgw', 'auth'
         limit: Max results (default 50)
+        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
-    if not _config_data:
+    config_data = _get_config_data(version)
+    if not config_data:
         return json.dumps({"section": section, "total": 0, "configs": []})
 
     prefix = section.lower().rstrip("_") + "_"
     matching = []
 
-    for name, cfg in sorted(_config_data.items()):
+    for name, cfg in sorted(config_data.items()):
         if name.lower().startswith(prefix):
             matching.append({
                 "name": name,
@@ -659,7 +857,7 @@ def list_configs_by_section(section: str, limit: int = 50) -> str:
 
 
 @mcp.tool()
-def validate_script(script_content: str, script_type: str = "auto") -> str:
+def validate_script(script_content: str, script_type: str = "auto", version: str | None = None) -> str:
     """Quick validation of a test script against the Ceph command knowledge base.
 
     Extracts all Ceph commands from the script and verifies each one exists
@@ -672,10 +870,11 @@ def validate_script(script_content: str, script_type: str = "auto") -> str:
     Args:
         script_content: The full text content of the test script.
         script_type: Script language — "python", "shell", "yaml", or "auto" (detect).
+        version: Optional Ceph version to validate against (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
     from ceph_command_kb.validation.validator import Validator
 
-    commands = _get_commands_map()
+    commands = _get_commands_map(version)
     if not commands:
         return json.dumps({"error": "Knowledge base not loaded"})
 
@@ -694,7 +893,7 @@ def validate_script(script_content: str, script_type: str = "auto") -> str:
 
 
 @mcp.tool()
-def review_test(script_content: str, script_type: str = "auto") -> str:
+def review_test(script_content: str, script_type: str = "auto", version: str | None = None) -> str:
     """Full deterministic review of a Ceph test script.
 
     Runs all validation phases:
@@ -711,10 +910,11 @@ def review_test(script_content: str, script_type: str = "auto") -> str:
     Args:
         script_content: The full text content of the test script.
         script_type: Script language — "python", "shell", "yaml", or "auto" (detect).
+        version: Optional Ceph version to validate against (e.g. 'squid', 'tentacle', '8.1', '9.1')
     """
     from ceph_command_kb.validation.validator import Validator
 
-    commands = _get_commands_map()
+    commands = _get_commands_map(version)
     if not commands:
         return json.dumps({"error": "Knowledge base not loaded"})
 
@@ -736,13 +936,23 @@ def capabilities() -> str:
     Used by orchestrators and agents for automatic capability discovery.
     Every MCP in the Engineering Intelligence Platform exposes this tool.
     """
-    cmd_count = len(_get_commands_map())
-    config_count = len(_config_data) if _config_data else 0
-    version_info = _kb_data.get("version", {}) if _kb_data else {}
+    version_summaries = []
+    total_cmds = 0
+    total_cfgs = 0
+    for label, vd in sorted(_versions.items()):
+        n_cmds = len(vd.commands_map)
+        n_cfgs = len(vd.config_data)
+        total_cmds += n_cmds
+        total_cfgs += n_cfgs
+        version_summaries.append({
+            "label": label,
+            "commands": n_cmds,
+            "configs": n_cfgs,
+        })
 
     return json.dumps({
         "name": "Ceph Command Knowledge Base",
-        "description": "Verified CLI commands, config parameters, and test validation for Ceph storage",
+        "description": "Multi-version Ceph CLI commands, config parameters, and test validation",
         "schema_version": SCHEMA_VERSION,
         "entity_types": ["command", "config"],
         "operations": [
@@ -753,13 +963,15 @@ def capabilities() -> str:
             "verify_config", "search_config", "get_config_help",
             "list_configs_by_section",
             "validate_script", "review_test",
-            "capabilities", "health",
+            "list_versions", "capabilities", "health",
         ],
-        "supported_versions": [version_info.get("label", "unknown")],
+        "supported_versions": [v["label"] for v in version_summaries],
+        "default_version": _default_version_label,
         "entity_counts": {
-            "commands": cmd_count,
-            "configs": config_count,
+            "commands": total_cmds,
+            "configs": total_cfgs,
         },
+        "versions": version_summaries,
     }, indent=2)
 
 
@@ -770,19 +982,28 @@ def health() -> str:
     Includes whether the index is loaded, entity counts, and readiness.
     Every MCP in the Engineering Intelligence Platform exposes this tool.
     """
-    cmd_count = len(_get_commands_map())
-    config_count = len(_config_data) if _config_data else 0
-    kb_loaded = _kb_data is not None and cmd_count > 0
-    version_info = _kb_data.get("version", {}) if _kb_data else {}
+    total_cmds = sum(len(vd.commands_map) for vd in _versions.values())
+    total_cfgs = sum(len(vd.config_data) for vd in _versions.values())
+    kb_loaded = bool(_versions) and total_cmds > 0
+
+    version_health = []
+    for label, vd in sorted(_versions.items()):
+        version_health.append({
+            "label": label,
+            "commands": len(vd.commands_map),
+            "configs": len(vd.config_data),
+            "search_ready": bool(vd.search_index),
+        })
 
     return json.dumps({
         "status": "ok" if kb_loaded else "degraded",
         "kb_loaded": kb_loaded,
-        "search_ready": _search_index is not None and bool(_search_index),
-        "total_commands": cmd_count,
-        "total_configs": config_count,
-        "version": version_info.get("label", "unknown"),
+        "total_versions": len(_versions),
+        "default_version": _default_version_label,
+        "total_commands": total_cmds,
+        "total_configs": total_cfgs,
         "schema_version": SCHEMA_VERSION,
+        "versions": version_health,
     }, indent=2)
 
 
@@ -802,12 +1023,18 @@ def _silence_stderr_logging() -> None:
 
 
 def init_kb(kb_path: str | Path | None = None) -> None:
-    """Load the knowledge base. Called before starting any transport."""
-    if kb_path is None:
-        kb_path = _find_latest_kb()
+    """Load the knowledge base. Called before starting any transport.
 
+    If kb_path is a specific version directory, loads just that version.
+    If kb_path is None, discovers and loads ALL versions under the knowledge/ root.
+    """
     if kb_path is not None:
         _load_knowledge_base(Path(kb_path))
+        return
+
+    knowledge_root = _find_knowledge_root()
+    if knowledge_root is not None:
+        _load_all_versions(knowledge_root)
     else:
         logger.warning(
             "No knowledge base found. Server will start but tools will return empty results. "
@@ -854,8 +1081,8 @@ def run_server(
         mcp.run(transport="streamable-http")
 
 
-def _find_latest_kb() -> Path | None:
-    """Find the most recently generated knowledge base.
+def _find_knowledge_root() -> Path | None:
+    """Find the knowledge base root directory containing version subdirectories.
 
     Searches CWD first, then falls back to the project root
     (relative to this source file) so the server works regardless
@@ -868,14 +1095,30 @@ def _find_latest_kb() -> Path | None:
     for knowledge_dir in candidates:
         if not knowledge_dir.is_dir():
             continue
-        version_dirs = sorted(
-            (d for d in knowledge_dir.iterdir() if d.is_dir() and (d / "commands.json").exists()),
-            key=lambda d: d.stat().st_mtime,
-            reverse=True,
+        has_versions = any(
+            d.is_dir() and (d / "commands.json").exists()
+            for d in knowledge_dir.iterdir()
         )
-        if version_dirs:
-            return version_dirs[0]
+        if has_versions:
+            return knowledge_dir
     return None
+
+
+def _find_latest_kb() -> Path | None:
+    """Find the most recently generated knowledge base (single version).
+
+    Kept for backward compat with auto_update and CLI --kb-path.
+    """
+    knowledge_root = _find_knowledge_root()
+    if knowledge_root is None:
+        return None
+    version_dirs = sorted(
+        (d for d in knowledge_root.iterdir()
+         if d.is_dir() and (d / "commands.json").exists()),
+        key=lambda d: d.stat().st_mtime,
+        reverse=True,
+    )
+    return version_dirs[0] if version_dirs else None
 
 
 if __name__ == "__main__":

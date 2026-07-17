@@ -1,0 +1,50 @@
+{
+  "version": {
+    "major": 19,
+    "minor": 2,
+    "patch": 1,
+    "release_name": "squid",
+    "full_string": "ceph version 19.2.1-375.el9cp (c211246f411935f66da79d287ac32e37470f0096) squid (stable)",
+    "label": "ceph-19.2.1-squid"
+  },
+  "generated_at": "",
+  "generator_version": "",
+  "binaries_discovered": [
+    "ceph",
+    "ceph-authtool",
+    "ceph-bluestore-tool",
+    "ceph-objectstore-tool",
+    "ceph-volume",
+    "cephadm",
+    "crushtool",
+    "monmaptool",
+    "osdmaptool",
+    "rados",
+    "rbd"
+  ],
+  "binary_versions": {},
+  "total_commands": 1164,
+  "total_binaries": 11,
+  "commands_by_binary": {
+    "ceph": 919,
+    "ceph-authtool": 1,
+    "ceph-bluestore-tool": 1,
+    "ceph-objectstore-tool": 1,
+    "ceph-volume": 7,
+    "cephadm": 33,
+    "crushtool": 1,
+    "monmaptool": 1,
+    "osdmaptool": 1,
+    "rados": 130,
+    "rbd": 69
+  },
+  "parse_quality": {
+    "commands_with_description": 1116,
+    "commands_with_arguments": 696,
+    "commands_with_flags": 67,
+    "commands_with_examples": 0,
+    "description_coverage_pct": 95.9,
+    "argument_coverage_pct": 59.8,
+    "flag_coverage_pct": 5.8
+  }
+}
