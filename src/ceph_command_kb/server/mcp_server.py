@@ -112,18 +112,34 @@ def _load_version(kb_path: Path) -> VersionData:
 
 
 def _load_knowledge_base(kb_path: Path) -> None:
-    """Load a knowledge base version (backward-compat entry point for auto_update)."""
-    global _kb_data, _search_index, _config_data, _kb_dir, _commands_map_cache
+    """Load a knowledge base version (backward-compat entry point for auto_update).
+
+    Also scans sibling version dirs so auto-update picks up new versions.
+    """
+    global _kb_data, _search_index, _config_data, _kb_dir, _commands_map_cache, _default_version_label
 
     vd = _load_version(kb_path)
     _versions[vd.label] = vd
 
-    # Update backward-compat globals to point at this version
-    _kb_data = vd.kb_data
-    _search_index = vd.search_index
-    _config_data = vd.config_data
-    _kb_dir = vd.kb_dir
-    _commands_map_cache = vd.commands_map
+    # Also discover sibling version dirs (e.g. new version added via git pull)
+    parent = kb_path.parent
+    if parent.is_dir():
+        for sibling in parent.iterdir():
+            if sibling.is_dir() and (sibling / "commands.json").exists():
+                sib_label = sibling.name
+                if sib_label not in _versions:
+                    try:
+                        svd = _load_version(sibling)
+                        _versions[svd.label] = svd
+                    except Exception:
+                        pass
+
+    # Set default to latest version
+    if _versions:
+        _default_version_label = sorted(_versions.keys())[-1]
+
+    # Update backward-compat globals to point at default version
+    _set_compat_globals(_default_version_label or vd.label)
 
 
 def _load_all_versions(knowledge_dir: Path) -> None:
