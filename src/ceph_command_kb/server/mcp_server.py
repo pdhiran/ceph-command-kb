@@ -222,6 +222,36 @@ def _resolve_version(version: str | None) -> VersionData | None:
     return _versions.get(_default_version_label or "")
 
 
+def _version_required_response() -> str | None:
+    """If multiple versions are loaded and no version was specified, return a
+    JSON prompt listing available versions. Returns None if only one version
+    is loaded (safe to auto-select)."""
+    if len(_versions) <= 1:
+        return None
+
+    version_options = []
+    for label, vd in sorted(_versions.items()):
+        vi = vd.kb_data.get("version", {})
+        release = vi.get("release_name", "")
+        major = vi.get("major", "")
+        minor = vi.get("minor", "")
+        version_options.append({
+            "label": label,
+            "release_name": release,
+            "hint": f'Use version="{release}" or version="{major}" or version="{major}.{minor}"',
+        })
+
+    return json.dumps({
+        "status": "VERSION_REQUIRED",
+        "message": (
+            "Multiple Ceph versions are available in the knowledge base. "
+            "Please ask the user which version they are working with and "
+            "re-call this tool with the 'version' parameter set."
+        ),
+        "available_versions": version_options,
+    }, indent=2)
+
+
 def _get_commands_map(version: str | None = None) -> dict[str, dict]:
     """Return commands keyed by name for fast lookup."""
     vd = _resolve_version(version)
@@ -265,8 +295,13 @@ def find_command(command_name: str, version: str | None = None) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1', '19', '20')
+        version: Ceph version to query — REQUIRED when multiple versions are loaded. Accepts release name ('squid', 'tentacle'), IBM version ('8.1', '9.1'), or major ('19', '20'). Ask the user which version if not clear from context.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     commands = _get_commands_map(version)
     cmd = commands.get(command_name)
 
@@ -300,8 +335,13 @@ def verify_command(
         command: The full command to verify, e.g. 'ceph osd pool create'
         flags: Optional list of flags to verify, e.g. ['--size', '--pg-num']
         arguments: Optional list of argument names to verify, e.g. ['pool', 'pg_num']
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     commands = _get_commands_map(version)
     cmd = commands.get(command)
 
@@ -370,8 +410,13 @@ def search_commands(query: str, limit: int = 20, version: str | None = None) -> 
     Args:
         query: Search term (partial command name, keyword, or description fragment)
         limit: Maximum number of results to return (default 20)
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     commands = _get_commands_map(version)
     query_lower = query.lower()
     query_words = query_lower.split()
@@ -439,8 +484,13 @@ def list_subcommands(command_prefix: str, version: str | None = None) -> str:
 
     Args:
         command_prefix: The command prefix, e.g. 'ceph osd' or 'rbd'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     commands = _get_commands_map(version)
     cmd = commands.get(command_prefix)
 
@@ -481,8 +531,13 @@ def search_flag(flag: str, version: str | None = None) -> str:
 
     Args:
         flag: The flag to search for, e.g. '--pool' or '-p'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     si = _get_search_index(version)
     if si and "by_flag" in si:
         commands = si["by_flag"].get(flag, [])
@@ -515,8 +570,13 @@ def search_argument(argument_name: str, version: str | None = None) -> str:
 
     Args:
         argument_name: The argument name, e.g. 'pool' or 'image'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     si = _get_search_index(version)
     if si and "by_argument" in si:
         commands = si["by_argument"].get(argument_name, [])
@@ -550,8 +610,13 @@ def get_help(command_name: str, version: str | None = None) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     commands = _get_commands_map(version)
     cmd = commands.get(command_name)
 
@@ -582,8 +647,13 @@ def get_raw_help(command_name: str, version: str | None = None) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     kb_dir = _get_kb_dir(version)
     if kb_dir:
         filename = command_name.replace(" ", "-") + ".txt"
@@ -605,8 +675,13 @@ def get_examples(command_name: str, version: str | None = None) -> str:
 
     Args:
         command_name: The full command name, e.g. 'ceph osd pool create'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     commands = _get_commands_map(version)
     cmd = commands.get(command_name)
 
@@ -658,8 +733,13 @@ def find_binary(binary_name: str, version: str | None = None) -> str:
 
     Args:
         binary_name: The binary name, e.g. 'rbd', 'rados', 'cephadm'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     si = _get_search_index(version)
     if si and "by_binary" in si:
         commands = si["by_binary"].get(binary_name, [])
@@ -693,8 +773,13 @@ def search_keyword(keyword: str, version: str | None = None) -> str:
 
     Args:
         keyword: The keyword to search for, e.g. 'pool', 'snapshot', 'crush'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     si = _get_search_index(version)
     if si and "by_keyword" in si:
         commands = si["by_keyword"].get(keyword.lower(), [])
@@ -721,8 +806,13 @@ def verify_config(name: str, version: str | None = None) -> str:
 
     Args:
         name: The config parameter name, e.g. 'osd_pool_default_size'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     config_data = _get_config_data(version)
     if not config_data:
         return json.dumps({"status": "NO_CONFIG_DATA", "reason": "Config knowledge base not loaded"})
@@ -767,8 +857,13 @@ def search_config(query: str, limit: int = 20, version: str | None = None) -> st
     Args:
         query: Search term (keyword, partial name, or description fragment), e.g. 'pool size', 'osd recovery', 'fast_ec'
         limit: Max results (default 20)
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     config_data = _get_config_data(version)
     if not config_data:
         return json.dumps({"query": query, "total_results": 0, "results": []})
@@ -821,8 +916,13 @@ def get_config_help(name: str, version: str | None = None) -> str:
 
     Args:
         name: The config parameter name, e.g. 'osd_pool_default_size'
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     config_data = _get_config_data(version)
     if not config_data:
         return json.dumps({"found": False, "config": name})
@@ -844,8 +944,13 @@ def list_configs_by_section(section: str, limit: int = 50, version: str | None =
     Args:
         section: The config name prefix, e.g. 'osd', 'mon', 'rgw', 'auth'
         limit: Max results (default 50)
-        version: Optional Ceph version to query (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     config_data = _get_config_data(version)
     if not config_data:
         return json.dumps({"section": section, "total": 0, "configs": []})
@@ -886,8 +991,13 @@ def validate_script(script_content: str, script_type: str = "auto", version: str
     Args:
         script_content: The full text content of the test script.
         script_type: Script language — "python", "shell", "yaml", or "auto" (detect).
-        version: Optional Ceph version to validate against (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     from ceph_command_kb.validation.validator import Validator
 
     commands = _get_commands_map(version)
@@ -926,8 +1036,13 @@ def review_test(script_content: str, script_type: str = "auto", version: str | N
     Args:
         script_content: The full text content of the test script.
         script_type: Script language — "python", "shell", "yaml", or "auto" (detect).
-        version: Optional Ceph version to validate against (e.g. 'squid', 'tentacle', '8.1', '9.1')
+        version: Ceph version — REQUIRED when multiple versions are loaded. Ask the user which version if not clear.
     """
+    if version is None:
+        prompt = _version_required_response()
+        if prompt:
+            return prompt
+
     from ceph_command_kb.validation.validator import Validator
 
     commands = _get_commands_map(version)
