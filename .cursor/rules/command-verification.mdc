@@ -6,13 +6,41 @@ alwaysApply: false
 
 # Ceph Command & Config Verification
 
+## Version Disambiguation (Mandatory)
+
+The ceph-cmd-kb MCP serves multiple Ceph versions. Before calling ANY ceph-cmd-kb tool, determine which version the user is working with.
+
+**If the version is clear from context, use it directly:**
+- User mentions "8.1 cluster", "IBM Ceph 8", "Squid", "19.x" -> pass `version: "squid"`
+- User mentions "9.1 cluster", "IBM Ceph 9", "Tentacle", "20.x" -> pass `version: "tentacle"`
+- The cluster environment in the conversation (e.g., cephci-cluster-ops rule nodes) -> use the known version
+- A test file or script references a specific Ceph version -> use that version
+
+**If the version is NOT clear from context, ask the user first:**
+- Use `AskQuestion` with options like:
+  - "Ceph 8.1 / Squid (19.x)"
+  - "Ceph 9.1 / Tentacle (20.x)"
+  - "Both versions"
+- Do NOT silently default to the latest version without confirming
+
+**When "Both versions" is selected:**
+- Run the query against both versions and present a comparison
+- Highlight differences (commands/configs that exist in one but not the other, changed defaults, etc.)
+
+**Available version hints** (any of these work as the `version` parameter):
+- Release name: `"squid"`, `"tentacle"`
+- IBM product version: `"8.1"`, `"9.1"`
+- Major version: `"19"`, `"20"`
+- Full label: `"ceph-19.2.1-squid"`, `"ceph-20.2.1-tentacle"`
+
 ## Commands
 
 Before generating ANY Ceph CLI command in automation, test code, or scripts:
 
-1. **Verify the command exists** — call `verify_command` with the full command name
-2. **Verify flags** — include all flags in the verification call
-3. **Verify arguments** — include argument names in the verification call
+1. **Determine the target Ceph version** (see Version Disambiguation above)
+2. **Verify the command exists** — call `verify_command` with the full command name and `version`
+3. **Verify flags** — include all flags in the verification call
+4. **Verify arguments** — include argument names in the verification call
 
 - NEVER invent or guess Ceph commands, flags, or arguments
 - If `verify_command` returns `NOT_VERIFIED`, use `search_commands` to find the correct command
@@ -22,9 +50,10 @@ Before generating ANY Ceph CLI command in automation, test code, or scripts:
 
 Before setting ANY Ceph configuration parameter (`ceph config set`, `ceph config get`, etc.):
 
-1. **Verify the config exists** — call `verify_config` with the parameter name
-2. **Check type and constraints** — verify the value type matches (int, bool, str, etc.)
-3. **Check runtime updatability** — verify `can_update_at_runtime` if applying without restart
+1. **Determine the target Ceph version** (see Version Disambiguation above)
+2. **Verify the config exists** — call `verify_config` with the parameter name and `version`
+3. **Check type and constraints** — verify the value type matches (int, bool, str, etc.)
+4. **Check runtime updatability** — verify `can_update_at_runtime` if applying without restart
 
 - NEVER invent config parameter names
 - If `verify_config` returns `NOT_FOUND`, use `search_config` to find the correct name
