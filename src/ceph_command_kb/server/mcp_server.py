@@ -116,18 +116,20 @@ def _load_knowledge_base(kb_path: Path) -> None:
 
     Used by auto-update. Always re-reads JSON from disk so a git pull or
     ``./update_index.sh`` is visible without restarting Cursor.
-    """
-    global _versions
 
+    ``kb_path`` may be a version dir (contains ``commands.json``) or the
+    knowledge root. Sibling versions are always reloaded together. The
+    in-memory map is replaced atomically so callers never see an empty KB
+    mid-reload, and a failed scan keeps the previous versions.
+    """
     path = Path(kb_path)
     parent = path.parent if (path / "commands.json").exists() else path
-    _versions.clear()
     _load_all_versions(parent)
 
 
 def _load_all_versions(knowledge_dir: Path) -> None:
     """Load every version directory found under the knowledge base root."""
-    global _default_version_label
+    global _versions, _default_version_label
 
     if not knowledge_dir.is_dir():
         return
@@ -138,18 +140,23 @@ def _load_all_versions(knowledge_dir: Path) -> None:
         key=lambda d: d.name,
     )
 
+    loaded: dict[str, VersionData] = {}
     for vdir in version_dirs:
         try:
             vd = _load_version(vdir)
-            _versions[vd.label] = vd
+            loaded[vd.label] = vd
         except Exception as e:
             logger.warning("Failed to load version from %s: %s", vdir, e)
 
-    if _versions:
-        # Default to the latest version (highest major.minor.patch)
-        _default_version_label = sorted(_versions.keys())[-1]
-        _set_compat_globals(_default_version_label)
-        logger.info("Loaded %d versions, default: %s", len(_versions), _default_version_label)
+    if not loaded:
+        return
+
+    # Swap the module dict (CPython pointer assign) so tool calls never
+    # observe the empty map that _versions.clear() used to create.
+    _versions = loaded
+    _default_version_label = sorted(_versions.keys())[-1]
+    _set_compat_globals(_default_version_label)
+    logger.info("Loaded %d versions, default: %s", len(_versions), _default_version_label)
 
 
 def _set_compat_globals(label: str) -> None:
@@ -1069,8 +1076,9 @@ def _silence_stderr_logging() -> None:
 def init_kb(kb_path: str | Path | None = None) -> None:
     """Load the knowledge base. Called before starting any transport.
 
-    If kb_path is a specific version directory, loads just that version.
-    If kb_path is None, discovers and loads ALL versions under the knowledge/ root.
+    If kb_path is a version directory (contains commands.json) or a knowledge
+    root, loads EVERY sibling version under that tree. If kb_path is None,
+    discovers knowledge/ and loads all versions there.
     """
     if kb_path is not None:
         _load_knowledge_base(Path(kb_path))
@@ -1090,7 +1098,7 @@ def run_server(
     kb_path: str | Path | None = None,
     transport: str = "stdio",
     host: str = "0.0.0.0",
-    port: int = 8080,
+    port: int = 8081,
 ) -> None:
     """Start the MCP server with the specified transport.
 
@@ -1098,7 +1106,7 @@ def run_server(
         kb_path: Path to the knowledge base version directory.
         transport: Transport mode — "stdio", "sse", or "streamable-http".
         host: Bind address for HTTP transports (default: 0.0.0.0).
-        port: Port for HTTP transports (default: 8080).
+        port: Port for HTTP transports (default: 8081).
     """
     if transport not in SUPPORTED_TRANSPORTS:
         raise ValueError(
@@ -1173,7 +1181,11 @@ if __name__ == "__main__":
         "--kb-path",
         type=Path,
         default=None,
-        help="Path to knowledge base version directory",
+        help=(
+            "Path to a knowledge version directory or the knowledge root. "
+            "Sibling versions under that tree are all loaded. "
+            "Default: auto-discover knowledge/"
+        ),
     )
     parser.add_argument(
         "--transport", "-t",
@@ -1190,14 +1202,18 @@ if __name__ == "__main__":
     parser.add_argument(
         "--port", "-p",
         type=int,
-        default=8080,
-        help="Port for HTTP transports (default: 8080)",
+        default=8081,
+        help="Port for HTTP transports (default: 8081)",
     )
     parser.add_argument(
         "--auto-update",
         action=argparse.BooleanOptionalAction,
         default=True,
-        help="Auto-pull latest changes from git on startup (default: enabled)",
+        help=(
+            "Git pull on startup/interval plus .reload_trigger watcher "
+            "(default: on). --no-auto-update disables both; Cursor must "
+            "restart the MCP subprocess after an index update."
+        ),
     )
     parser.add_argument(
         "--update-interval",
@@ -1209,14 +1225,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.auto_update:
+        from ceph_command_kb.server.auto_update import start_auto_update
         resolved_kb = args.kb_path or _find_latest_kb()
-        if resolved_kb is not None:
-            from ceph_command_kb.server.auto_update import start_auto_update
-            start_auto_update(
-                Path(resolved_kb),
-                _load_knowledge_base,
-                update_interval_hours=args.update_interval,
-            )
+        watch = Path(resolved_kb) if resolved_kb is not None else Path(__file__).resolve().parents[3] / "knowledge"
+        start_auto_update(
+            watch,
+            _load_knowledge_base,
+            update_interval_hours=args.update_interval,
+        )
 
     run_server(
         kb_path=args.kb_path,

@@ -36,7 +36,7 @@ Command `--help` has **no date filter**. `--since` is recorded in `metadata.json
 | `git pull` of any `*.py` | MCP process `os._exit(0)`; Cursor respawns the subprocess with new code | Stays open |
 | No git remote (local-only checkout) | Git pull is skipped; trigger watcher still runs | Stays open |
 
-Disable with `--no-auto-update` on the MCP argv. Interval: `--update-interval HOURS` (default 1; `0` = startup pull only, trigger still watched).
+Disable with `--no-auto-update` on the MCP argv (also disables the trigger watcher). Interval: `--update-interval HOURS` (default 1; `0` = startup pull only, trigger still watched).
 
 ### Cursor MCP config
 
@@ -70,6 +70,6 @@ Configs: `import_configs.py` into `knowledge/<version>/configs.json` (separate f
 | Symptom | Check |
 |---|---|
 | MCP still serves old commands after rebuild | Confirm `.reload_trigger` was touched in **this** repo root; wait 5s; `health` / `capabilities` |
-| `./update_index.sh` exits immediately | `ceph` not on PATH — generate on a cluster node, then copy `knowledge/` |
+| `./update_index.sh` exits immediately | `ceph` not on PATH — generate on a cluster node, copy `knowledge/<version>/` into this repo, then `touch .reload_trigger` |
 | Git pull never happens | No `git remote`; trigger path still works for local rebuilds |
 | Cursor “MCP disconnected” briefly | Expected only after a `.py` pull; IDE respawns the process |

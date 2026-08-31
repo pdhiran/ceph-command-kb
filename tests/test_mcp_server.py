@@ -20,6 +20,7 @@ from ceph_command_kb.storage.search_index import SearchIndexWriter
 @pytest.fixture
 def kb_dir(tmp_path):
     """Create a temporary knowledge base for testing."""
+    version_dir = tmp_path / "ceph-19.2.0-squid"
     version = CephVersion(19, 2, 0, "squid", "ceph version 19.2.0 squid")
     kb = KnowledgeBase(
         version=version,
@@ -62,15 +63,17 @@ def kb_dir(tmp_path):
         keywords=["rbd", "create", "image"],
     )
 
-    JsonWriter(tmp_path).write(kb)
-    SearchIndexWriter(tmp_path).write(kb)
-    return tmp_path
+    JsonWriter(version_dir).write(kb)
+    SearchIndexWriter(version_dir).write(kb)
+    return version_dir
 
 
 @pytest.fixture(autouse=True)
 def load_kb(kb_dir):
     mcp_server._load_knowledge_base(kb_dir)
     yield
+    mcp_server._versions.clear()
+    mcp_server._default_version_label = None
     mcp_server._kb_data = None
     mcp_server._search_index = None
     mcp_server._kb_dir = None

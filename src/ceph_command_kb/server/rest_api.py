@@ -289,7 +289,10 @@ if __name__ == "__main__":
         "--kb-path",
         type=Path,
         default=None,
-        help="Path to knowledge base version directory",
+        help=(
+            "Path to a knowledge version directory or the knowledge root. "
+            "Sibling versions under that tree are all loaded."
+        ),
     )
     parser.add_argument(
         "--host",

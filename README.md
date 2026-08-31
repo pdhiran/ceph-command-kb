@@ -82,7 +82,7 @@ No Ceph cluster is required to **serve**. A cluster is required only to **rebuil
 }
 ```
 
-The server auto-discovers every `knowledge/ceph-*-*/` directory that contains `commands.json`. You do **not** need `--kb-path` unless you want a single version only.
+The server auto-discovers every `knowledge/ceph-*-*/` directory that contains `commands.json`. `--kb-path` is optional (a version dir or the knowledge root); sibling versions in that tree are still loaded. Omit it unless you need to point at a non-default tree.
 
 Restart Cursor after editing `mcp.json`.
 

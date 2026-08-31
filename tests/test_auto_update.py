@@ -122,6 +122,16 @@ class TestTriggerLoop:
 
 
 class TestStartAutoUpdate:
+    def test_no_git_still_watches_trigger(self, tmp_path):
+        knowledge = tmp_path / "knowledge" / "ceph-20.2.1-tentacle"
+        knowledge.mkdir(parents=True)
+        (knowledge / "commands.json").write_text("{}")
+        with patch("ceph_command_kb.server.auto_update._has_remote", return_value=False):
+            start_auto_update(knowledge, MagicMock(), update_interval_hours=0)
+        time.sleep(0.05)
+        names = [t.name for t in threading.enumerate()]
+        assert "kb-reload-trigger" in names
+
     def test_no_remote_still_starts_trigger(self, tmp_path):
         (tmp_path / ".git").mkdir()
         with patch("ceph_command_kb.server.auto_update._has_remote", return_value=False):
@@ -154,3 +164,108 @@ class TestUpdateIndexScript:
         assert "./update_index.sh" in text
         assert ".reload_trigger" in text
         assert "Cursor" in text
+
+
+def _write_mini_kb(dest: Path, *, major: int, minor: int, patch: int,
+                   release: str, extra_command: str | None = None) -> None:
+    from ceph_command_kb.models import CephVersion, Command, KnowledgeBase
+    from ceph_command_kb.storage.json_writer import JsonWriter
+
+    kb = KnowledgeBase(
+        version=CephVersion(major, minor, patch, release, f"ceph version {major}.{minor}.{patch} {release}"),
+        generated_at="2026-08-01T00:00:00Z",
+        generator_version="0.1.0",
+        binaries_discovered=["ceph"],
+        binary_versions={"ceph": f"{major}.{minor}.{patch}"},
+    )
+    kb.commands["ceph osd ls"] = Command(
+        name="ceph osd ls",
+        binary="ceph",
+        parts=["ceph", "osd", "ls"],
+        description="list osds",
+        keywords=["ceph", "osd", "ls"],
+    )
+    if extra_command:
+        kb.commands[extra_command] = Command(
+            name=extra_command,
+            binary="ceph",
+            parts=extra_command.split(),
+            description="extra",
+            keywords=extra_command.split(),
+        )
+    JsonWriter(dest).write(kb)
+
+
+class TestLoadKnowledgeBase:
+    """Hot-reload must re-read every version dir, including ones already in memory."""
+
+    @pytest.fixture(autouse=True)
+    def _reset_versions(self):
+        from ceph_command_kb.server import mcp_server
+        yield
+        mcp_server._versions.clear()
+        mcp_server._default_version_label = None
+
+    def test_reload_picks_up_all_versions_and_new_json(self, tmp_path):
+        from ceph_command_kb.server import mcp_server
+
+        squid = tmp_path / "ceph-19.2.1-squid"
+        tentacle = tmp_path / "ceph-20.2.1-tentacle"
+        _write_mini_kb(squid, major=19, minor=2, patch=1, release="squid")
+        _write_mini_kb(tentacle, major=20, minor=2, patch=1, release="tentacle")
+
+        mcp_server._load_knowledge_base(tentacle)
+        assert set(mcp_server._versions) == {
+            "ceph-19.2.1-squid",
+            "ceph-20.2.1-tentacle",
+        }
+        assert "ceph auth dump-keys" not in mcp_server._versions["ceph-20.2.1-tentacle"].commands_map
+
+        _write_mini_kb(
+            tentacle, major=20, minor=2, patch=1, release="tentacle",
+            extra_command="ceph auth dump-keys",
+        )
+        mcp_server._load_knowledge_base(tentacle)
+
+        assert set(mcp_server._versions) == {
+            "ceph-19.2.1-squid",
+            "ceph-20.2.1-tentacle",
+        }
+        assert "ceph auth dump-keys" in mcp_server._versions["ceph-20.2.1-tentacle"].commands_map
+        assert "ceph osd ls" in mcp_server._versions["ceph-19.2.1-squid"].commands_map
+
+    def test_reload_does_not_empty_versions_mid_load(self, tmp_path):
+        from ceph_command_kb.server import mcp_server
+
+        squid = tmp_path / "ceph-19.2.1-squid"
+        tentacle = tmp_path / "ceph-20.2.1-tentacle"
+        _write_mini_kb(squid, major=19, minor=2, patch=1, release="squid")
+        _write_mini_kb(tentacle, major=20, minor=2, patch=1, release="tentacle")
+        mcp_server._load_knowledge_base(tentacle)
+
+        seen: list[int] = []
+        orig = mcp_server._load_version
+
+        def spy(path):
+            seen.append(len(mcp_server._versions))
+            return orig(path)
+
+        with patch.object(mcp_server, "_load_version", side_effect=spy):
+            mcp_server._load_knowledge_base(tentacle)
+
+        assert seen
+        assert all(n >= 2 for n in seen), f"KB was empty mid-reload: {seen}"
+
+    def test_failed_reload_keeps_previous_versions(self, tmp_path):
+        from ceph_command_kb.server import mcp_server
+
+        squid = tmp_path / "ceph-19.2.1-squid"
+        tentacle = tmp_path / "ceph-20.2.1-tentacle"
+        _write_mini_kb(squid, major=19, minor=2, patch=1, release="squid")
+        _write_mini_kb(tentacle, major=20, minor=2, patch=1, release="tentacle")
+        mcp_server._load_knowledge_base(tentacle)
+        before = set(mcp_server._versions)
+
+        mcp_server._load_knowledge_base(tmp_path / "does-not-exist")
+
+        assert set(mcp_server._versions) == before

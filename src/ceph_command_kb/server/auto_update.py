@@ -185,6 +185,22 @@ def _trigger_loop(
                 logger.warning("Trigger reload failed: %s", exc)
 
 
+def _watch_root(kb_path: Path) -> Path:
+    """Directory that holds ``.reload_trigger``. Does not require ``.git``.
+
+    Version dir ``knowledge/ceph-*-*/`` → repo root. ``knowledge/`` → parent.
+    """
+    git = _find_repo_root(kb_path)
+    if git is not None:
+        return git
+    path = kb_path.resolve()
+    if (path / "commands.json").exists():
+        return path.parent.parent
+    if path.name == "knowledge":
+        return path.parent
+    return path
+
+
 def start_auto_update(
     kb_path: Path,
     reload_fn: callable,
@@ -203,17 +219,16 @@ def start_auto_update(
     if _periodic_stop is not None and not _periodic_stop.is_set():
         return
 
-    repo_root = _find_repo_root(kb_path)
-    if repo_root is None:
-        return
+    git_root = _find_repo_root(kb_path)
+    repo_root = _watch_root(kb_path)
 
     stop_event = threading.Event()
     _periodic_stop = stop_event
 
-    if _has_remote(repo_root):
+    if git_root is not None and _has_remote(git_root):
         thread = threading.Thread(
             target=_do_update,
-            args=(kb_path, repo_root, reload_fn),
+            args=(kb_path, git_root, reload_fn),
             daemon=True,
             name="auto-update-startup",
         )
@@ -223,7 +238,7 @@ def start_auto_update(
             interval_seconds = update_interval_hours * 3600
             periodic = threading.Thread(
                 target=_periodic_loop,
-                args=(kb_path, repo_root, reload_fn, interval_seconds, stop_event),
+                args=(kb_path, git_root, reload_fn, interval_seconds, stop_event),
                 daemon=True,
                 name="auto-update-periodic",
             )

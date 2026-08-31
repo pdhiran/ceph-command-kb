@@ -26,7 +26,8 @@ fi
 if ! command -v ceph >/dev/null 2>&1; then
     echo "error: 'ceph' is not on PATH." >&2
     echo "error: generate_reference.py must run on a node with Ceph binaries." >&2
-    echo "error: after capture, copy knowledge/<version>/ back to this repo." >&2
+    echo "error: after capture, copy knowledge/<version>/ back to this repo," >&2
+    echo "error: then: touch .reload_trigger   # running MCP hot-reloads in ~5s" >&2
     exit 1
 fi
 
