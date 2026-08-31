@@ -1173,7 +1173,7 @@ def _find_latest_kb() -> Path | None:
     return version_dirs[0] if version_dirs else None
 
 
-if __name__ == "__main__":
+def parse_cli_args(argv: list[str] | None = None):
     import argparse
 
     parser = argparse.ArgumentParser(description="Ceph Command KB MCP Server")
@@ -1220,9 +1220,17 @@ if __name__ == "__main__":
         type=float,
         default=1,
         metavar="HOURS",
-        help="Hours between periodic update checks (default: 1, 0=disable periodic)",
+        help=(
+            "Hours between periodic git pulls (default: 1). "
+            "0 disables periodic pulls; .reload_trigger is still watched "
+            "unless --no-auto-update"
+        ),
     )
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    args = parse_cli_args(argv)
 
     if args.auto_update:
         from ceph_command_kb.server.auto_update import start_auto_update
@@ -1240,3 +1248,7 @@ if __name__ == "__main__":
         host=args.host,
         port=args.port,
     )
+
+
+if __name__ == "__main__":
+    main()

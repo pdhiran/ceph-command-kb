@@ -14,29 +14,29 @@ function activate(context) {
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = "$(database) Ceph KB";
     statusBarItem.tooltip = "Ceph Command Knowledge Base";
-    statusBarItem.command = 'ceph-kb.searchCommands';
+    statusBarItem.command = 'ceph-cmd-kb.searchCommands';
     statusBarItem.show();
     context.subscriptions.push(statusBarItem);
 
     // Create diagnostic collection for inline warnings
-    diagnosticCollection = vscode.languages.createDiagnosticCollection('ceph-kb');
+    diagnosticCollection = vscode.languages.createDiagnosticCollection('ceph-cmd-kb');
     context.subscriptions.push(diagnosticCollection);
 
     // Register commands
     context.subscriptions.push(
-        vscode.commands.registerCommand('ceph-kb.verifyCommand', verifyCommand)
+        vscode.commands.registerCommand('ceph-cmd-kb.verifyCommand', verifyCommand)
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand('ceph-kb.searchCommands', searchCommands)
+        vscode.commands.registerCommand('ceph-cmd-kb.searchCommands', searchCommands)
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand('ceph-kb.verifyConfig', verifyConfig)
+        vscode.commands.registerCommand('ceph-cmd-kb.verifyConfig', verifyConfig)
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand('ceph-kb.reviewScript', reviewScript)
+        vscode.commands.registerCommand('ceph-cmd-kb.reviewScript', reviewScript)
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand('ceph-kb.insertCommand', insertCommand)
+        vscode.commands.registerCommand('ceph-cmd-kb.insertCommand', insertCommand)
     );
 
     // Register code actions provider for quick fixes
@@ -51,7 +51,7 @@ function activate(context) {
     // Auto-verify on save if enabled
     context.subscriptions.push(
         vscode.workspace.onDidSaveTextDocument(document => {
-            const config = vscode.workspace.getConfiguration('ceph-kb');
+            const config = vscode.workspace.getConfiguration('ceph-cmd-kb');
             if (config.get('autoVerify')) {
                 reviewScriptSilent(document);
             }
@@ -63,7 +63,7 @@ function activate(context) {
 }
 
 async function getApiUrl() {
-    const config = vscode.workspace.getConfiguration('ceph-kb');
+    const config = vscode.workspace.getConfiguration('ceph-cmd-kb');
     return config.get('apiUrl', 'http://localhost:9090');
 }
 
@@ -319,7 +319,7 @@ class CephKBCodeActionProvider {
                     vscode.CodeActionKind.QuickFix
                 );
                 action.command = {
-                    command: 'ceph-kb.searchCommands',
+                    command: 'ceph-cmd-kb.searchCommands',
                     title: 'Search Ceph Commands'
                 };
                 actions.push(action);

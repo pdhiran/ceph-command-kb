@@ -1,11 +1,11 @@
 """Load Ceph config parameters from TSV files.
 
 Supports two TSV formats:
-1. Reference format (from capture_config_reference.sh):
+1. Reference format (13 columns, typically from `ceph --show-config-dump` / a capture pipeline):
    name, type, level, default, desc, long_desc, can_update_at_runtime,
    services, min, max, enum_allowed, tags, flags
 
-2. Defaults format (from capture_config_defaults.sh):
+2. Defaults format (4 columns):
    daemon_type, name, value, source
 """
 

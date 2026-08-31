@@ -48,18 +48,19 @@ src/ceph_command_kb/
 │   ├── cleanup_pairs.py   # 25 create-to-cleanup command mappings
 │   └── risk_patterns.py   # 22 destructive command/flag patterns
 └── server/
-    ├── mcp_server.py      # MCP server (18 tools, 3 transports)
-    └── rest_api.py        # REST API (19 endpoints)
+    ├── mcp_server.py      # MCP server (20 tools, 3 transports)
+    ├── rest_api.py        # REST API (20 endpoints, default port 9090)
+    └── auto_update.py     # git pull + .reload_trigger watcher
 ```
 
 ## Knowledge Base Structure
 
 ```
-knowledge/ceph-20.2.1-tentacle/
-  commands.json          # 1,254 commands with full metadata
-  configs.json           # 2,660 config parameters with types, defaults, descriptions
-  search_index.json      # Optimized lookup (37,000+ keyword entries)
-  metadata.json          # Version, stats, parse quality metrics
+knowledge/
+  ceph-19.2.1-squid/       # 1,164 commands, 2,409 configs
+  ceph-20.2.1-tentacle/    # 1,254 commands, 2,660 configs
+Each version directory: commands.json, configs.json, search_index.json, metadata.json.
+raw_help/ and markdown/ are written only with --docs and are gitignored.
 ```
 
 ## REST API Endpoints
@@ -67,7 +68,8 @@ knowledge/ceph-20.2.1-tentacle/
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
 | `/health` | GET | Server health + KB status |
-| `/api/verify_command` | POST | Verify a command exists |
+| `/api/capabilities` | GET | Machine-readable tool/version catalog |
+| `/api/verify_command` | POST | Verify a command exists (`version` optional) |
 | `/api/find_command` | POST | Look up command by name |
 | `/api/search_commands` | POST | Search commands |
 | `/api/list_subcommands` | POST | List subcommands |
@@ -130,7 +132,7 @@ The architecture supports any CLI tool. Adding `kubectl`, `podman`, `systemctl`,
 
 1. **Flat command map** — `dict[str, Command]` keyed by full name. O(1) lookup.
 2. **Parser registry** — Binary-to-parser mapping with auto-detection fallback.
-3. **Raw help always stored** — Re-parse with improved parsers without re-running discovery.
+3. **Raw help is opt-in** — `generate_reference.py --docs` writes `raw_help/` (gitignored). Re-parse needs that local tree.
 4. **Safe executor as single subprocess boundary** — All safety in one place.
 5. **Version-specific output** — Multiple versions coexist. Never mix.
 6. **Deterministic validation + LLM reasoning** — MCP tools provide verified facts. The LLM provides contextual reasoning (workflow analysis, QE practices). No brittle rule engine for what the LLM does better.
@@ -142,13 +144,13 @@ pip install -e ".[dev]"
 python -m pytest tests/ -v
 ```
 
-93 tests covering: models, executor safety, all 4 parsers, storage writers, MCP tools, command extraction, validation engine.
+126 tests covering: models, executor safety, all 4 parsers, storage writers, MCP tools, REST `version` forwarding, auto-update / `--since`, command extraction, validation engine.
 
 ---
 
 ## Maintainer Guide
 
-For regenerating the knowledge base when a new Ceph version is released.
+Canonical incremental rebuild (records `--since`, touches `.reload_trigger`): see [UPDATING.md](UPDATING.md) and `./update_index.sh`. `./update_kb.sh` only execs `./update_index.sh`.
 
 ### Regenerate Command KB
 
@@ -158,23 +160,23 @@ Run inside `cephadm shell --mount /path/to/ceph-command-kb:/mnt/ceph-command-kb`
 cd /mnt/ceph-command-kb
 python3 generate_reference.py --verbose --force
 python3 generate_reference.py --verbose --docs   # optional: also generate markdown + raw help
+# or: ./update_index.sh 2026-08-01
 ```
+
+`--since YYYY-MM-DD` does **not** skip commands. It stamps `metadata.json` and still runs full `--help` discovery.
 
 ### Capture Config Parameters
 
-On a Ceph node with a running cluster:
-
-```bash
-python3 capture_config_reference.py ceph_config_reference.tsv 32
-```
-
-Then import:
+There is no `capture_config_reference.py` in this repo. Produce TSVs from a live cluster (`ceph --show-config-dump` / your capture pipeline), then:
 
 ```bash
 python3 import_configs.py \
   --reference ceph_config_reference.tsv \
-  --defaults ceph_config_all_defaults.tsv
+  --defaults ceph_config_all_defaults.tsv \
+  --kb-dir knowledge/ceph-20.2.1-tentacle
 ```
+
+Default `--kb-dir` is tentacle. For squid, pass `knowledge/ceph-19.2.1-squid`.
 
 ### Update from Manual Help Text
 
@@ -186,8 +188,10 @@ python3 update_from_help.py
 
 ### Re-parse with Improved Parsers
 
-After fixing a parser, regenerate structured data from stored raw help:
+After fixing a parser, regenerate structured data from stored raw help (`raw_help/` is gitignored; needs a prior `--docs` generate):
 
 ```bash
-python3 reparse_kb.py
+python3 generate_reference.py --reparse --verbose
 ```
+
+That rewrites **only** `sorted(knowledge/)[-1]` (tentacle today). `reparse_kb.py` is a tentacle-hardcoded leftover — do not use it as the generic path.

@@ -10,7 +10,7 @@ The Ceph Command KB provides four integration methods:
 3. **REST API** - For LangChain, CrewAI, CI/CD pipelines, and custom integrations
 4. **VS Code Extension** - For VS Code / Bob users with inline verification, search, and script review
 
-**For Bob agents:** Bob supports MCP over SSE natively. This is the recommended integration — Bob gets full access to all 18 MCP tools, same as Cursor. Alternatively, use the REST API or the VS Code extension.
+**For Bob agents:** Bob supports MCP over SSE natively. This is the recommended integration — Bob gets full access to all 20 MCP tools, same as Cursor. Alternatively, use the REST API or the VS Code extension.
 
 ## Architecture
 
@@ -30,8 +30,8 @@ The Ceph Command KB provides four integration methods:
          ↓
 ┌─────────────────────────┐
 │ Knowledge Base          │
-│ - 1,254 commands        │
-│ - 2,660 config params   │
+│ - squid: 1,164 commands, 2,409 configs
+│ - tentacle: 1,254 commands, 2,660 configs
 │ - Search indices        │
 └─────────────────────────┘
 ```
@@ -51,7 +51,7 @@ pip install -e .
 
 ### 2. Connect Bob via MCP (Recommended)
 
-Bob supports MCP over SSE. This gives Bob full access to all 18 tools — same as Cursor.
+Bob supports MCP over SSE. This gives Bob full access to all 20 tools — same as Cursor.
 
 Start the MCP server with SSE transport:
 
@@ -72,7 +72,7 @@ Add to Bob's `.bob/mcp.json`:
 }
 ```
 
-Restart Bob. It will discover all 18 tools automatically.
+Restart Bob. It will discover all 20 tools automatically.
 
 If the server runs on a shared lab machine, replace `localhost` with the hostname:
 ```json
@@ -97,7 +97,7 @@ python -m ceph_command_kb.server.rest_api
 # Or specify custom host/port
 python -m ceph_command_kb.server.rest_api --host 0.0.0.0 --port 9090
 
-# Or specify a different Ceph version
+# Sibling versions under knowledge/ are still loaded
 python -m ceph_command_kb.server.rest_api --kb-path knowledge/ceph-20.2.1-tentacle
 ```
 
@@ -292,7 +292,7 @@ result = crew.kickoff()
 
 ## Available REST API Endpoints
 
-### Command Verification (12 endpoints)
+### Command Verification (13 endpoints)
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
@@ -306,6 +306,7 @@ result = crew.kickoff()
 | `/api/get_raw_help` | POST | Get original help text |
 | `/api/get_examples` | POST | Get usage examples |
 | `/api/list_versions` | GET/POST | List available KB versions |
+| `/api/capabilities` | GET | Tool catalog + version counts |
 | `/api/find_binary` | POST | List all commands for a binary |
 | `/api/search_keyword` | POST | Search by keyword |
 
@@ -331,6 +332,8 @@ result = crew.kickoff()
 |----------|--------|---------|
 | `/health` | GET | Server health + KB status |
 
+Command, config, and test POSTs accept optional `"version"` (`squid`, `tentacle`, `8.1`, `9.1`, `19`, `20`, or a full label). Omit it to use the default (latest loaded, currently tentacle).
+
 ## Usage Examples
 
 ### 1. Verify a Command
@@ -341,7 +344,8 @@ curl -X POST http://localhost:9090/api/verify_command \
   -d '{
     "command": "ceph osd pool create",
     "flags": ["--size"],
-    "arguments": ["pool_name", "pg_num"]
+    "arguments": ["pool_name", "pg_num"],
+    "version": "squid"
   }'
 ```
 

@@ -52,7 +52,8 @@ class CephCommandKBClient:
         self,
         command: str,
         flags: Optional[List[str]] = None,
-        arguments: Optional[List[str]] = None
+        arguments: Optional[List[str]] = None,
+        version: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Verify a Ceph command exists and is valid.
@@ -80,6 +81,8 @@ class CephCommandKBClient:
             payload["flags"] = flags
         if arguments:
             payload["arguments"] = arguments
+        if version:
+            payload["version"] = version
         
         response = requests.post(
             f"{self.base_url}/api/verify_command",
@@ -135,7 +138,7 @@ class CephCommandKBClient:
         response.raise_for_status()
         return response.json()
     
-    def verify_config(self, name: str) -> Dict[str, Any]:
+    def verify_config(self, name: str, version: Optional[str] = None) -> Dict[str, Any]:
         """
         Verify a Ceph configuration parameter.
         
@@ -152,7 +155,7 @@ class CephCommandKBClient:
         """
         response = requests.post(
             f"{self.base_url}/api/verify_config",
-            json={"name": name},
+            json={"name": name, **({"version": version} if version else {})},
             timeout=self.timeout
         )
         response.raise_for_status()

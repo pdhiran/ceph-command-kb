@@ -1,12 +1,14 @@
 """Background auto-updater — pulls latest changes from git on startup
-and periodically thereafter.
+and periodically thereafter, and always watches ``.reload_trigger``.
 
 Runs ``git pull --ff-only origin <branch>`` in a daemon thread so the
 server starts instantly with whatever is on disk, then:
 
 - If only knowledge base files changed → hot-reload commands/configs.
-- If source code (.py) changed → ``os._exit(0)`` so Cursor restarts
-  the MCP server process with the updated code.
+- If source code (.py) changed → ``os._exit(0)`` so Cursor respawns
+  the MCP subprocess (the IDE stays open).
+- ``./update_index.sh`` touches ``.reload_trigger`` → in-process reload
+  without git. No remote / no ``.git``: trigger only.
 
 A second daemon thread wakes up every *update_interval_hours* (default 1)
 to repeat the check.

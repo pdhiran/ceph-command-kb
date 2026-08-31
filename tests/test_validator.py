@@ -53,6 +53,11 @@ def _make_commands_map():
             description=desc, flags=flags,
         ).to_dict()
         cmds[name] = cmd_data
+    cmds["ceph osd pool"] = Command(
+        name="ceph osd pool", binary="ceph", parts=["ceph", "osd", "pool"],
+        description="pool ops",
+        subcommands=["create", "delete", "application"],
+    ).to_dict()
     return cmds
 
 
@@ -78,6 +83,17 @@ class TestCommandVerification:
         report = validator.validate(script, script_type="shell")
         flag_findings = [f for f in report.findings if f.phase == "flag_check"]
         assert len(flag_findings) >= 1
+
+    def test_typo_subcommand_not_verified_as_parent(self, validator):
+        script = "ceph osd pool created mypool"
+        report = validator.validate(script, script_type="shell")
+        assert report.verified_commands == 0
+        assert any(f.phase == "command_verify" for f in report.findings)
+
+    def test_leaf_with_positional_verified(self, validator):
+        assert validator._find_command("ceph osd pool create mypool") is not None
+        assert validator._find_command("ceph osd pool created mypool") is None
+        assert validator._find_command("ceph osd pool")["name"] == "ceph osd pool"
 
 
 class TestCleanupValidation:

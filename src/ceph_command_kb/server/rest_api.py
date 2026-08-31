@@ -7,7 +7,7 @@ or any consumer that doesn't speak MCP.
 Usage:
     python -m ceph_command_kb.server.rest_api
     python -m ceph_command_kb.server.rest_api --port 9090
-    python -m ceph_command_kb.server.rest_api --kb-path knowledge/ceph-19.2.0-squid
+    python -m ceph_command_kb.server.rest_api --kb-path knowledge/ceph-19.2.1-squid
 """
 
 from __future__ import annotations
@@ -73,7 +73,9 @@ async def handle_find_command(request: Request) -> JSONResponse:
     params = await _get_params(request, ["command_name"])
     if isinstance(params, JSONResponse):
         return params
-    result = find_command(command_name=params["command_name"])
+    result = find_command(
+        command_name=params["command_name"], version=params.get("version"),
+    )
     return JSONResponse(_parse_json(result))
 
 
@@ -85,6 +87,7 @@ async def handle_verify_command(request: Request) -> JSONResponse:
         command=params["command"],
         flags=params.get("flags"),
         arguments=params.get("arguments"),
+        version=params.get("version"),
     )
     return JSONResponse(_parse_json(result))
 
@@ -96,6 +99,7 @@ async def handle_search_commands(request: Request) -> JSONResponse:
     result = search_commands(
         query=params["query"],
         limit=params.get("limit", 20),
+        version=params.get("version"),
     )
     return JSONResponse(_parse_json(result))
 
@@ -104,7 +108,9 @@ async def handle_list_subcommands(request: Request) -> JSONResponse:
     params = await _get_params(request, ["command_prefix"])
     if isinstance(params, JSONResponse):
         return params
-    result = list_subcommands(command_prefix=params["command_prefix"])
+    result = list_subcommands(
+        command_prefix=params["command_prefix"], version=params.get("version"),
+    )
     return JSONResponse(_parse_json(result))
 
 
@@ -112,7 +118,7 @@ async def handle_search_flag(request: Request) -> JSONResponse:
     params = await _get_params(request, ["flag"])
     if isinstance(params, JSONResponse):
         return params
-    result = search_flag(flag=params["flag"])
+    result = search_flag(flag=params["flag"], version=params.get("version"))
     return JSONResponse(_parse_json(result))
 
 
@@ -120,7 +126,9 @@ async def handle_search_argument(request: Request) -> JSONResponse:
     params = await _get_params(request, ["argument_name"])
     if isinstance(params, JSONResponse):
         return params
-    result = search_argument(argument_name=params["argument_name"])
+    result = search_argument(
+        argument_name=params["argument_name"], version=params.get("version"),
+    )
     return JSONResponse(_parse_json(result))
 
 
@@ -128,7 +136,9 @@ async def handle_get_help(request: Request) -> JSONResponse:
     params = await _get_params(request, ["command_name"])
     if isinstance(params, JSONResponse):
         return params
-    result = get_help(command_name=params["command_name"])
+    result = get_help(
+        command_name=params["command_name"], version=params.get("version"),
+    )
     return JSONResponse(_parse_json(result))
 
 
@@ -136,7 +146,9 @@ async def handle_get_raw_help(request: Request) -> JSONResponse:
     params = await _get_params(request, ["command_name"])
     if isinstance(params, JSONResponse):
         return params
-    raw = get_raw_help(command_name=params["command_name"])
+    raw = get_raw_help(
+        command_name=params["command_name"], version=params.get("version"),
+    )
     try:
         return JSONResponse(_parse_json(raw))
     except json.JSONDecodeError:
@@ -147,7 +159,9 @@ async def handle_get_examples(request: Request) -> JSONResponse:
     params = await _get_params(request, ["command_name"])
     if isinstance(params, JSONResponse):
         return params
-    result = get_examples(command_name=params["command_name"])
+    result = get_examples(
+        command_name=params["command_name"], version=params.get("version"),
+    )
     return JSONResponse(_parse_json(result))
 
 
@@ -160,7 +174,9 @@ async def handle_find_binary(request: Request) -> JSONResponse:
     params = await _get_params(request, ["binary_name"])
     if isinstance(params, JSONResponse):
         return params
-    result = find_binary(binary_name=params["binary_name"])
+    result = find_binary(
+        binary_name=params["binary_name"], version=params.get("version"),
+    )
     return JSONResponse(_parse_json(result))
 
 
@@ -168,7 +184,9 @@ async def handle_search_keyword(request: Request) -> JSONResponse:
     params = await _get_params(request, ["keyword"])
     if isinstance(params, JSONResponse):
         return params
-    result = search_keyword(keyword=params["keyword"])
+    result = search_keyword(
+        keyword=params["keyword"], version=params.get("version"),
+    )
     return JSONResponse(_parse_json(result))
 
 
@@ -179,7 +197,7 @@ async def handle_verify_config(request: Request) -> JSONResponse:
     name = params.get("name") or params.get("config_name", "")
     if not name:
         return _error_response(400, "Missing required field: 'name' or 'config_name'")
-    result = verify_config(name=name)
+    result = verify_config(name=name, version=params.get("version"))
     return JSONResponse(_parse_json(result))
 
 
@@ -190,7 +208,9 @@ async def handle_search_config(request: Request) -> JSONResponse:
     query = params.get("query") or params.get("keyword", "")
     if not query:
         return _error_response(400, "Missing required field: 'query' or 'keyword'")
-    result = search_config(query=query, limit=params.get("limit", 20))
+    result = search_config(
+        query=query, limit=params.get("limit", 20), version=params.get("version"),
+    )
     return JSONResponse(_parse_json(result))
 
 
@@ -201,7 +221,7 @@ async def handle_get_config_help(request: Request) -> JSONResponse:
     name = params.get("name") or params.get("config_name", "")
     if not name:
         return _error_response(400, "Missing required field: 'name' or 'config_name'")
-    result = get_config_help(name=name)
+    result = get_config_help(name=name, version=params.get("version"))
     return JSONResponse(_parse_json(result))
 
 
@@ -209,7 +229,11 @@ async def handle_list_configs_by_section(request: Request) -> JSONResponse:
     params = await _get_params(request, ["section"])
     if isinstance(params, JSONResponse):
         return params
-    result = list_configs_by_section(section=params["section"], limit=params.get("limit", 50))
+    result = list_configs_by_section(
+        section=params["section"],
+        limit=params.get("limit", 50),
+        version=params.get("version"),
+    )
     return JSONResponse(_parse_json(result))
 
 
@@ -220,6 +244,7 @@ async def handle_validate_script(request: Request) -> JSONResponse:
     result = validate_script(
         script_content=params["script_content"],
         script_type=params.get("script_type", "auto"),
+        version=params.get("version"),
     )
     return JSONResponse(_parse_json(result))
 
@@ -231,6 +256,7 @@ async def handle_review_test(request: Request) -> JSONResponse:
     result = review_test(
         script_content=params["script_content"],
         script_type=params.get("script_type", "auto"),
+        version=params.get("version"),
     )
     return JSONResponse(_parse_json(result))
 
@@ -257,7 +283,7 @@ routes = [
     Route("/api/get_help", handle_get_help, methods=["POST"]),
     Route("/api/get_raw_help", handle_get_raw_help, methods=["POST"]),
     Route("/api/get_examples", handle_get_examples, methods=["POST"]),
-    Route("/api/list_versions", handle_list_versions, methods=["GET"]),
+    Route("/api/list_versions", handle_list_versions, methods=["GET", "POST"]),
     Route("/api/find_binary", handle_find_binary, methods=["POST"]),
     Route("/api/search_keyword", handle_search_keyword, methods=["POST"]),
     Route("/api/verify_config", handle_verify_config, methods=["POST"]),

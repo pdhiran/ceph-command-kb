@@ -66,20 +66,14 @@
         "ceph-cmd-kb.autoVerify": {
           "type": "boolean",
           "default": false,
-          "description": "Automatically verify Ceph commands as you type"
+          "description": "Automatically verify Ceph commands in the file on save"
         }
       }
     }
   },
-  "scripts": {
-    "lint": "eslint .",
-    "pretest": "npm run lint",
-    "test": "node ./test/runTest.js"
-  },
   "devDependencies": {
     "@types/node": "16.x",
-    "@types/vscode": "^1.80.0",
-    "eslint": "^8.41.0"
+    "@types/vscode": "^1.80.0"
   },
   "dependencies": {
     "axios": "^1.18.1"

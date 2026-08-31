@@ -8,7 +8,7 @@ Cursor does **not** need a restart after an index update. The MCP process hot-re
 
 ```bash
 cd /path/to/ceph-command-kb
-./update_index.sh                 # since last successful run, or last 1 day
+./update_index.sh                 # since yesterday of last success (1-day overlap), or last 1 day if first run
 ./update_index.sh 7               # last 7 days
 ./update_index.sh 2026-08-01      # explicit ISO date
 ./update_index.sh --reset         # clear .last_index_update
@@ -25,7 +25,9 @@ Must run on a host where Ceph binaries (`ceph`, `rbd`, …) are on `PATH`. After
 3. Touches `.reload_trigger` in the repo root.
 4. Writes `.last_index_update`.
 
-Command `--help` has **no date filter**. `--since` is recorded in `metadata.json` (`updated_since`, `last_incremental_at`) and a **full rediscovery** runs (safe: only `-h` / `--help` / `help`).
+Command `--help` has **no date filter**. `--since` is recorded in `metadata.json` (`updated_since`, `last_incremental_at`) and a **full rediscovery** runs (safe: only `-h` / `--help` / `help`). The date is a recorded window, not a filter of which commands are discovered.
+
+After a successful `./update_index.sh`, `.last_index_update` stores **yesterday of the run date** (same 1-day overlap as ceph-issue-kb `update_index.sh`), not the ISO date you passed in.
 
 ## How the running MCP picks up the new index (no Cursor restart)
 
@@ -44,7 +46,7 @@ Leave auto-update on (default). Example stdio args:
 
 ```json
 {
-  "command": "python",
+  "command": "python3",
   "args": ["-m", "ceph_command_kb.server.mcp_server", "--auto-update", "--update-interval", "1"]
 }
 ```
@@ -55,11 +57,13 @@ To disable: `"--no-auto-update"`.
 
 ```bash
 python3 generate_reference.py --since 2026-08-01 --verbose --force
-python3 generate_reference.py --reparse --since 2026-08-01   # from stored raw_help, no cluster
+python3 generate_reference.py --reparse --since 2026-08-01   # last sorted version dir only; needs raw_help/
 touch .reload_trigger   # if MCP is already running
 ```
 
-Configs: `import_configs.py` into `knowledge/<version>/configs.json` (separate from command discovery).
+`--reparse` does **not** walk every version. It takes `sorted(knowledge/)[-1]` (currently tentacle). `knowledge/*/raw_help/` is gitignored, so a fresh clone cannot reparse until you have generated with `--docs` on that machine. `reparse_kb.py` is an older tentacle-only helper — prefer `generate_reference.py --reparse`.
+
+Configs: `import_configs.py --kb-dir knowledge/<version>/` into `configs.json` (separate from command discovery). Default `--kb-dir` is `knowledge/ceph-20.2.1-tentacle`.
 
 ## Files that must stay untracked
 

@@ -106,7 +106,7 @@ Scripts are automatically checked on save with inline diagnostics.
 
 | Display | Meaning |
 |---------|---------|
-| `Ceph KB (1254 cmds)` | Connected, KB loaded |
+| `Ceph KB (N cmds)` | Connected; N is commands across **all** loaded versions |
 | `Ceph KB (offline)` | REST API not running |
 
 Click the status bar item to open command search.

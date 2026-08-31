@@ -54,7 +54,7 @@
     <p class="subtitle">User Guide — Verify Ceph commands, configs, and test scripts from your AI agent</p>
 
     <h2>1. What is Ceph Command KB?</h2>
-    <p>Ceph Command KB is an <strong>MCP server</strong> that provides a verified knowledge base of <strong>1,254 Ceph CLI commands</strong> and <strong>2,660 configuration parameters</strong> for Ceph 20.2.1 (Tentacle). It eliminates command hallucinations when AI agents generate Ceph automation or tests.</p>
+    <p>Ceph Command KB is an <strong>MCP server</strong> that provides a verified knowledge base of Ceph CLI commands and configuration parameters for <strong>Squid 19.x / IBM Storage Ceph 8.x</strong> (1,164 commands, 2,409 configs) and <strong>Tentacle 20.x / IBM Storage Ceph 9.x</strong> (1,254 commands, 2,660 configs). It eliminates command hallucinations when AI agents generate Ceph automation or tests.</p>
     <ul>
       <li><strong>Verify</strong> commands, flags, and arguments before generating code</li>
       <li><strong>Search</strong> commands by keyword, description, or flag</li>
@@ -71,12 +71,12 @@
   "mcpServers": {
     "ceph-cmd-kb": {
       "command": "python3",
-      "args": ["-m", "ceph_command_kb.server.mcp_server", "--kb-path", "/path/to/knowledge/ceph-20.2.1-tentacle"],
+      "args": ["-m", "ceph_command_kb.server.mcp_server"],
       "cwd": "/path/to/ceph-command-kb"
     }
   }
 }</code></pre>
-    <p>Restart Cursor. The server starts automatically.</p>
+    <p>Restart Cursor after editing <code>mcp.json</code>. The server auto-discovers every <code>knowledge/ceph-*-*/</code> directory. Auto-update (git pull + <code>.reload_trigger</code>) is <strong>on by default</strong>. <code>--no-auto-update</code> disables both — including the trigger watcher.</p>
 
     <h3>Option B: HTTP/SSE (Bob, Claude Desktop, Continue, Cline)</h3>
     <p>Start the server:</p>
@@ -143,32 +143,39 @@
     </table>
 
     <h2>5. Running All Ceph MCPs Together</h2>
-    <p>Three MCPs form the Ceph Engineering Intelligence Platform:</p>
+    <p>Five MCPs form the Ceph Engineering Intelligence Platform. Ports below are the <strong>code defaults</strong> in each repo:</p>
     <table>
-      <thead><tr><th>MCP</th><th>Purpose</th><th>SSE Port</th></tr></thead>
+      <thead><tr><th>MCP</th><th>Purpose</th><th>SSE</th><th>REST</th></tr></thead>
       <tbody>
-        <tr><td><strong>ceph-cmd-kb</strong></td><td>Commands, configs, test validation</td><td>8081</td></tr>
-        <tr><td><strong>ceph-doc-kb</strong></td><td>Documentation, code examples</td><td>8082</td></tr>
-        <tr><td><strong>ceph-issue-kb</strong></td><td>Known issues, workarounds, fixes</td><td>8083</td></tr>
+        <tr><td><strong>ceph-cmd-kb</strong></td><td>Commands, configs, test validation</td><td>8081</td><td>9090</td></tr>
+        <tr><td><strong>ceph-doc-kb</strong></td><td>Documentation, code examples</td><td>8082</td><td>8100</td></tr>
+        <tr><td><strong>ceph-issue-kb</strong></td><td>Known issues, workarounds, fixes</td><td>8083</td><td>8200</td></tr>
+        <tr><td><strong>ceph-prio-hub</strong></td><td>Customer prio-list / L3 tracking</td><td>8080</td><td>—</td></tr>
+        <tr><td><strong>cephci-kb</strong></td><td>CephCI code, tests, workflows</td><td>8084</td><td>—</td></tr>
       </tbody>
     </table>
-    <pre><code>python -m ceph_command_kb.server.mcp_server --transport sse --port 8081 &
-python -m ceph_doc_kb.server.mcp_server --transport sse --port 8082 &
-python -m ceph_issue_kb.server.mcp_server --transport sse --port 8083 &</code></pre>
+    <pre><code>python3 -m ceph_command_kb.server.mcp_server --transport sse --port 8081 &
+python3 -m ceph_doc_kb.server.mcp_server --transport sse --port 8082 &
+python3 -m ceph_issue_kb.server.mcp_server --transport sse --port 8083 &
+python3 -m ceph_prio_hub.server.mcp_server --transport sse --port 8080 &
+python3 -m cephci_kb.server.mcp_server --transport sse --port 8084 &</code></pre>
     <pre><code>{
   "mcpServers": {
     "ceph-cmd-kb": { "url": "http://localhost:8081/sse", "transport": "sse" },
     "ceph-doc-kb": { "url": "http://localhost:8082/sse", "transport": "sse" },
-    "ceph-issue-kb": { "url": "http://localhost:8083/sse", "transport": "sse" }
+    "ceph-issue-kb": { "url": "http://localhost:8083/sse", "transport": "sse" },
+    "ceph-prio-hub": { "url": "http://localhost:8080/sse", "transport": "sse" },
+    "cephci-kb": { "url": "http://localhost:8084/sse", "transport": "sse" }
   }
 }</code></pre>
 
     <h2>6. Troubleshooting</h2>
     <ul>
       <li><strong>Agent doesn't see the server</strong> — Restart the IDE after editing <code>mcp.json</code>. Verify the server name and path match this guide.</li>
-      <li><strong>Commands not verified</strong> — Check that <code>--kb-path</code> points to the correct knowledge base directory containing <code>commands.json</code>.</li>
+      <li><strong>Commands not verified</strong> — Pass <code>version</code> (<code>squid</code> / <code>tentacle</code>). Absence from the KB means not indexed, not absent from the product.</li>
       <li><strong>Config tools return empty</strong> — Verify <code>configs.json</code> exists in the KB directory.</li>
-      <li><strong>SSE connection refused</strong> — Verify the server is running: <code>curl http://localhost:8081/health</code>.</li>
+      <li><strong>SSE connection refused</strong> — Confirm the MCP process is listening on 8081. HTTP <code>/health</code> is on the <strong>REST</strong> port: <code>curl http://localhost:9090/health</code>.</li>
+      <li><strong>Index update did not show up</strong> — <code>./update_index.sh</code> touches <code>.reload_trigger</code>. If you passed <code>--no-auto-update</code>, restart the MCP subprocess.</li>
     </ul>
 
     <div class="footer">

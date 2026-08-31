@@ -84,7 +84,7 @@ No Ceph cluster is required to **serve**. A cluster is required only to **rebuil
 
 The server auto-discovers every `knowledge/ceph-*-*/` directory that contains `commands.json`. `--kb-path` is optional (a version dir or the knowledge root); sibling versions in that tree are still loaded. Omit it unless you need to point at a non-default tree.
 
-Restart Cursor after editing `mcp.json`.
+**Auto-update is on by default** (no extra flags needed): git pull on startup/interval, plus a `.reload_trigger` watcher so `./update_index.sh` hot-reloads without restarting Cursor. `--no-auto-update` disables **both** — including the trigger — so Cursor must restart the MCP subprocess after an index update. Interval: `--update-interval HOURS` (default `1`; `0` = startup pull only, trigger still watched). Details: [UPDATING.md](UPDATING.md).
 
 ### SSE
 
@@ -175,7 +175,7 @@ Also: `capabilities`, `health`.
 
 Same `--since YYYY-MM-DD` contract as `python index_issues.py --since DATE`.
 
-Command `--help` has **no date filter**. `--since` records the delta window in `metadata.json` (`updated_since`, `last_incremental_at`) and runs a **full rediscovery** from live binaries (safe: only `-h` / `--help` / `help`).
+Command `--help` has **no date filter**. `--since` records the delta window in `metadata.json` (`updated_since`, `last_incremental_at`) and runs a **full rediscovery** from live binaries (safe: only `-h` / `--help` / `help`). It is not an incremental parse of “commands added since DATE”.
 
 Must run on a node where those binaries are on `PATH` (cluster admin / cephadm shell host). Copy `knowledge/<version>/` back into this repo afterward.
 
@@ -184,20 +184,26 @@ Must run on a node where those binaries are on `PATH` (cluster admin / cephadm s
 python3 generate_reference.py --since 2026-08-01 --verbose --force
 
 # Canonical wrapper (last-run tracker + .reload_trigger for in-process MCP reload)
-./update_index.sh                 # last run, or last 1 day
+./update_index.sh                 # since yesterday of last success (1-day overlap), or last 1 day if first run
 ./update_index.sh 7
 ./update_index.sh 2026-08-01
 ./update_index.sh --reset
 
-# Re-parse stored raw_help/*.txt without a cluster
+# Re-parse stored raw_help/*.txt without a cluster (see caveats below)
 python3 generate_reference.py --reparse --since 2026-08-01
 ```
+
+After a successful `./update_index.sh`, `.last_index_update` stores **yesterday of the run date** (same 1-day overlap as ceph-issue-kb), not the ISO date you passed in.
+
+`--reparse` only rewrites the **last sorted** version directory under `knowledge/` (today that is tentacle). `raw_help/` is gitignored — you need a prior `generate_reference.py --docs` on that host. Prefer `generate_reference.py --reparse` over `reparse_kb.py` (the latter is hardcoded to tentacle).
+
+`./update_kb.sh` is a compatibility wrapper that execs `./update_index.sh`. Do not treat it as the canonical command.
 
 Full maintainer help (hot-reload, git auto-update, no Cursor restart): [UPDATING.md](UPDATING.md).
 
 Other generate flags: `--resume`, `--force`, `--workers N`, `--output DIR`, `--docs` (also write markdown + raw help), `--config config.yaml`.
 
-Config parameters are imported separately via `import_configs.py` (TSV from `ceph --show-config-dump` / project pipeline) into `knowledge/<version>/configs.json`.
+Config parameters are imported separately via `import_configs.py` (TSV from `ceph --show-config-dump` / project pipeline) into `knowledge/<version>/configs.json`. Pass `--kb-dir knowledge/ceph-19.2.1-squid` (or tentacle) — the default `--kb-dir` is tentacle only.
 
 ## Architecture
 

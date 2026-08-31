@@ -187,22 +187,29 @@ class Validator:
                 ))
 
     def _find_command(self, name: str) -> dict | None:
-        """Look up a command by exact match or valid parent prefix.
+        """Look up a command by exact match or longest leaf prefix.
 
-        Only falls back to a shorter prefix if the matched command
-        lists the next word as a known subcommand — prevents false
-        verification of misspelled subcommands.
+        Positional arguments after a leaf command (one with no longer
+        children in the map) are allowed. A non-leaf prefix only matches
+        if the next word is a listed subcommand — so ``ceph osd pool created``
+        does not verify as ``ceph osd pool``.
         """
         if name in self._commands:
             return self._commands[name]
         parts = name.split()
         for length in range(len(parts) - 1, 0, -1):
             candidate = " ".join(parts[:length])
-            if candidate in self._commands:
-                cmd = self._commands[candidate]
-                remaining = parts[length]
-                if remaining in cmd.get("subcommands", []):
-                    return cmd
+            if candidate not in self._commands:
+                continue
+            cmd = self._commands[candidate]
+            leftover = parts[length:]
+            prefix = candidate + " "
+            has_children = any(n.startswith(prefix) for n in self._commands)
+            if not has_children:
+                return cmd
+            if leftover and leftover[0] in (cmd.get("subcommands") or []):
+                return cmd
+            return None
         return None
 
     def _find_similar(self, name: str) -> list[str]:
