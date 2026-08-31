@@ -12,6 +12,7 @@ Usage:
     python generate_reference.py --workers 8
     python generate_reference.py --output knowledge
     python generate_reference.py --config config.yaml
+    python generate_reference.py --since 2026-08-01
 """
 
 from __future__ import annotations
@@ -85,11 +86,31 @@ def parse_args() -> argparse.Namespace:
         default=False,
         help="Also generate Markdown docs and raw help text files",
     )
+    parser.add_argument(
+        "--since",
+        metavar="YYYY-MM-DD",
+        default=None,
+        help=(
+            "Delta window recorded in metadata.json. Command help has no "
+            "date filter — this triggers a full rediscovery from live "
+            "binaries (same as a normal generate) and stamps "
+            "updated_since. Same CLI contract as "
+            "python index_issues.py --since DATE"
+        ),
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+
+    if args.since:
+        from datetime import datetime as _dt
+        try:
+            _dt.strptime(args.since, "%Y-%m-%d")
+        except ValueError:
+            print(f"error: --since must be YYYY-MM-DD, got {args.since!r}", file=sys.stderr)
+            return 1
 
     config = Config.load(args.config)
     config.merge_cli_args(
@@ -111,7 +132,7 @@ def main() -> int:
 
     if args.reparse:
         logger.info("Re-parse mode: regenerating from stored raw help")
-        return _reparse(config)
+        return _reparse(config, since=args.since)
 
     cache_dir = Path(config.cache_dir)
     if config.force:
@@ -146,6 +167,9 @@ def main() -> int:
         MarkdownWriter(version_dir).write(kb)
         RawHelpWriter(version_dir).write(kb)
 
+    if args.since:
+        _stamp_updated_since(version_dir, args.since)
+
     logger.info("=== Generation complete ===")
     logger.info("  Commands:  %d", kb.total_commands)
     logger.info("  Binaries:  %d", kb.total_binaries)
@@ -154,7 +178,7 @@ def main() -> int:
     return 0
 
 
-def _reparse(config: Config) -> int:
+def _reparse(config: Config, since: str | None = None) -> int:
     """Re-parse from stored raw help files without running discovery.
 
     Loads raw_help/*.txt, runs them through parsers, and regenerates
@@ -234,8 +258,25 @@ def _reparse(config: Config) -> int:
     MarkdownWriter(version_dir).write(kb)
     SearchIndexWriter(version_dir).write(kb)
 
+    if since:
+        _stamp_updated_since(version_dir, since)
+
     logger.info("Re-parse complete: %d commands", kb.total_commands)
     return 0
+
+
+def _stamp_updated_since(version_dir: Path, since: str) -> None:
+    """Record the delta window on metadata.json after a generate/reparse."""
+    import json
+    from datetime import datetime, timezone
+
+    path = version_dir / "metadata.json"
+    if not path.exists():
+        return
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["updated_since"] = since
+    data["last_incremental_at"] = datetime.now(timezone.utc).isoformat()
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

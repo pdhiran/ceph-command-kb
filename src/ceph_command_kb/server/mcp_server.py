@@ -112,34 +112,17 @@ def _load_version(kb_path: Path) -> VersionData:
 
 
 def _load_knowledge_base(kb_path: Path) -> None:
-    """Load a knowledge base version (backward-compat entry point for auto_update).
+    """Hot-reload every version directory under the knowledge root.
 
-    Also scans sibling version dirs so auto-update picks up new versions.
+    Used by auto-update. Always re-reads JSON from disk so a git pull or
+    ``./update_index.sh`` is visible without restarting Cursor.
     """
-    global _kb_data, _search_index, _config_data, _kb_dir, _commands_map_cache, _default_version_label
+    global _versions
 
-    vd = _load_version(kb_path)
-    _versions[vd.label] = vd
-
-    # Also discover sibling version dirs (e.g. new version added via git pull)
-    parent = kb_path.parent
-    if parent.is_dir():
-        for sibling in parent.iterdir():
-            if sibling.is_dir() and (sibling / "commands.json").exists():
-                sib_label = sibling.name
-                if sib_label not in _versions:
-                    try:
-                        svd = _load_version(sibling)
-                        _versions[svd.label] = svd
-                    except Exception:
-                        pass
-
-    # Set default to latest version
-    if _versions:
-        _default_version_label = sorted(_versions.keys())[-1]
-
-    # Update backward-compat globals to point at default version
-    _set_compat_globals(_default_version_label or vd.label)
+    path = Path(kb_path)
+    parent = path.parent if (path / "commands.json").exists() else path
+    _versions.clear()
+    _load_all_versions(parent)
 
 
 def _load_all_versions(knowledge_dir: Path) -> None:
